@@ -7,18 +7,20 @@ local UserInputService = game:GetService("UserInputService")
 local KEY_CORRETA = "key-htpjvg"
 local LINK_GAMEPASS = "https://www.roblox.com/pt/game-pass/1731556830/Key-primion-scripy-killer"
 
--- CORES ESTILO FOTO 1
+-- CORES
 local COLORS = {
     BG = Color3.fromRGB(15, 17, 22),
     Sidebar = Color3.fromRGB(20, 22, 28),
     Accent = Color3.fromRGB(0, 255, 127),
     Gold = Color3.fromRGB(255, 200, 50),
-    Purple = Color3.fromRGB(130, 100, 255),
-    White = Color3.new(1, 1, 1)
+    Black = Color3.fromRGB(0, 0, 0)
 }
 
--- LIMPEZA
-if playerGui:FindFirstChild("PrimionV4_Final") then playerGui.PrimionV4_Final:Destroy() end
+-- LIMPEZA (CORRIGIDO: Agora apaga o nome certo da ScreenGui)
+if playerGui:FindFirstChild("PrimionV4_Final") then 
+    playerGui["PrimionV4_Final"]:Destroy() 
+end
+
 local sg = Instance.new("ScreenGui")
 sg.Name = "PrimionV4_Final"
 sg.IgnoreGuiInset = true
@@ -26,31 +28,26 @@ sg.ResetOnSpawn = false
 sg.Parent = playerGui
 
 -----------------------------------------------------------
--- 🛠️ FUNÇÕES DE CRIAÇÃO (PARA NÃO FICAR VAZIO)
+-- 🌌 BOTÃO TOGGLE (QUADRADINHO PRETO COM ESTRELINHAS)
 -----------------------------------------------------------
-local function CreateButton(parent, text, color, callback)
-    local btn = Instance.new("TextButton")
-    btn.Size = UDim2.new(0.94, 0, 0, 40)
-    btn.BackgroundColor3 = Color3.fromRGB(30, 32, 40)
-    btn.Text = "  " .. text
-    btn.TextColor3 = COLORS.White
-    btn.Font = Enum.Font.GothamMedium
-    btn.TextSize = 14
-    btn.TextXAlignment = Enum.TextXAlignment.Left
-    btn.Parent = parent
-    
-    local corner = Instance.new("UICorner", btn)
-    local stroke = Instance.new("UIStroke", btn)
-    stroke.Color = color
-    stroke.Thickness = 1.2
-    stroke.Transparency = 0.5
-    
-    btn.MouseButton1Click:Connect(callback)
-    return btn
-end
+local toggleBtn = Instance.new("TextButton")
+toggleBtn.Size = UDim2.new(0, 45, 0, 45)
+toggleBtn.Position = UDim2.new(0, 10, 0.5, -22)
+toggleBtn.BackgroundColor3 = COLORS.Black
+toggleBtn.Text = "✨\n. * . " 
+toggleBtn.TextColor3 = Color3.new(1, 1, 1)
+toggleBtn.Font = Enum.Font.GothamBold
+toggleBtn.TextSize = 10
+toggleBtn.Visible = false -- Só aparece após a Key
+toggleBtn.Parent = sg
+
+Instance.new("UICorner", toggleBtn).CornerRadius = UDim.new(0, 8)
+local tStroke = Instance.new("UIStroke", toggleBtn)
+tStroke.Color = Color3.fromRGB(60, 60, 60)
+tStroke.Thickness = 2
 
 -----------------------------------------------------------
--- 🎮 PAINEL PRINCIPAL
+-- 🎮 PAINEL PRINCIPAL (ABAS LATERAIS)
 -----------------------------------------------------------
 local mainHub = Instance.new("Frame")
 mainHub.Size = UDim2.new(0, 650, 0, 400)
@@ -63,28 +60,28 @@ Instance.new("UIStroke", mainHub).Color = COLORS.Accent
 
 -- Sidebar
 local sidebar = Instance.new("Frame")
-sidebar.Size = UDim2.new(0, 160, 1, 0)
+sidebar.Size = UDim2.new(0, 150, 1, 0)
 sidebar.BackgroundColor3 = COLORS.Sidebar
 sidebar.Parent = mainHub
 Instance.new("UICorner", sidebar)
-
-local sideTitle = Instance.new("TextLabel")
-sideTitle.Size = UDim2.new(1, 0, 0, 60)
-sideTitle.Text = "PRIMION V4"
-sideTitle.TextColor3 = COLORS.Gold
-sideTitle.Font = Enum.Font.GothamBold
-sideTitle.TextSize = 20
-sideTitle.BackgroundTransparency = 1
-sideTitle.Parent = sidebar
 
 local sideLayout = Instance.new("UIListLayout", sidebar)
 sideLayout.Padding = UDim.new(0, 5)
 sideLayout.HorizontalAlignment = Enum.HorizontalAlignment.Center
 
+local sideTitle = Instance.new("TextLabel")
+sideTitle.Size = UDim2.new(1, 0, 0, 50)
+sideTitle.Text = "PRIMION V4"
+sideTitle.TextColor3 = COLORS.Gold
+sideTitle.Font = Enum.Font.GothamBold
+sideTitle.TextSize = 18
+sideTitle.BackgroundTransparency = 1
+sideTitle.Parent = sidebar
+
 -- Área de Conteúdo
 local contentArea = Instance.new("Frame")
-contentArea.Size = UDim2.new(1, -175, 1, -20)
-contentArea.Position = UDim2.new(0, 165, 0, 10)
+contentArea.Size = UDim2.new(1, -165, 1, -20)
+contentArea.Position = UDim2.new(0, 155, 0, 10)
 contentArea.BackgroundTransparency = 1
 contentArea.Parent = mainHub
 
@@ -95,142 +92,97 @@ local function CreatePage(name)
     p.Visible = false
     p.BackgroundTransparency = 1
     p.ScrollBarThickness = 2
-    p.CanvasSize = UDim2.new(0, 0, 1.5, 0)
     p.Parent = contentArea
-    local layout = Instance.new("UIListLayout", p)
-    layout.Padding = UDim.new(0, 10)
-    layout.HorizontalAlignment = Enum.HorizontalAlignment.Center
     pages[name] = p
     return p
 end
 
--- Criar as Abas
+-- Criar as 5 Abas
 local tabs = {"Menu", "ESP", "FPS Killer", "Player", "Configuração"}
 for _, name in pairs(tabs) do
-    local page = CreatePage(name)
+    local p = CreatePage(name)
     local b = Instance.new("TextButton")
-    b.Size = UDim2.new(0.9, 0, 0, 40)
+    b.Size = UDim2.new(0.9, 0, 0, 35)
     b.BackgroundColor3 = Color3.fromRGB(35, 37, 45)
     b.Text = name
-    b.TextColor3 = COLORS.White
+    b.TextColor3 = Color3.new(1,1,1)
     b.Font = Enum.Font.GothamMedium
     b.Parent = sidebar
     Instance.new("UICorner", b)
     
     b.MouseButton1Click:Connect(function()
         for _, pg in pairs(pages) do pg.Visible = false end
-        page.Visible = true
+        p.Visible = true
     end)
 end
 pages["Menu"].Visible = true
 
------------------------------------------------------------
--- 🚀 PREENCHENDO AS FUNÇÕES (CONTEÚDO)
------------------------------------------------------------
-
--- ABA: MENU
-CreateButton(pages["Menu"], "🌟 Bem-vindo: " .. player.Name, COLORS.Gold, function() end)
-CreateButton(pages["Menu"], "📅 Versão: Primion V4.0.2", COLORS.Purple, function() end)
-CreateButton(pages["Menu"], "🛠️ Status: Funcionando", COLORS.Accent, function() end)
-
--- ABA: ESP (VISUAL)
-CreateButton(pages["ESP"], "👁️ ESP Box (Jogadores)", COLORS.Accent, function() print("ESP Ativado") end)
-CreateButton(pages["ESP"], "🏷️ ESP Name (Nomes)", COLORS.Accent, function() end)
-CreateButton(pages["ESP"], "📏 ESP Tracer (Linhas)", COLORS.White, function() end)
-
--- ABA: FPS KILLER (PERFORMANCE)
-CreateButton(pages["FPS Killer"], "⚡ Boost FPS Extreme", COLORS.Purple, function()
-    for _, v in pairs(game:GetDescendants()) do
-        if v:IsA("Texture") or v:IsA("Decal") then v:Destroy() end
-    end
+-- Lógica do Toggle
+toggleBtn.MouseButton1Click:Connect(function()
+    mainHub.Visible = not mainHub.Visible
 end)
-CreateButton(pages["FPS Killer"], "🌑 Remover Sombras", COLORS.White, function() game.Lighting.GlobalShadows = false end)
-CreateButton(pages["FPS Killer"], "🍃 Limpar Memória", COLORS.Gold, function() end)
-
--- ABA: PLAYER
-CreateButton(pages["Player"], "🏃 Velocidade Ativar (50)", COLORS.Accent, function() player.Character.Humanoid.WalkSpeed = 50 end)
-CreateButton(pages["Player"], "🚀 Pulo Infinito", COLORS.Purple, function() end)
-CreateButton(pages["Player"], "🔄 Resetar Character", COLORS.Gold, function() player.Character:BreakJoints() end)
-
--- ABA: CONFIGURAÇÃO
-CreateButton(pages["Configuração"], "📋 Copiar Link Discord", COLORS.Gold, function() setclipboard("discord.gg/primion") end)
-CreateButton(pages["Configuração"], "❌ Fechar Script", Color3.fromRGB(255, 50, 50), function() sg:Destroy() end)
 
 -----------------------------------------------------------
--- 🌌 BOTÃO TOGGLE (ESTRELINHAS)
------------------------------------------------------------
-local toggleBtn = Instance.new("TextButton")
-toggleBtn.Size = UDim2.new(0, 45, 0, 45)
-toggleBtn.Position = UDim2.new(0, 10, 0.5, -22)
-toggleBtn.BackgroundColor3 = COLORS.Black
-toggleBtn.Text = "✨"
-toggleBtn.TextColor3 = COLORS.White
-toggleBtn.Visible = false
-toggleBtn.Parent = sg
-Instance.new("UICorner", toggleBtn).CornerRadius = UDim.new(0, 8)
-toggleBtn.MouseButton1Click:Connect(function() mainHub.Visible = not mainHub.Visible end)
-
------------------------------------------------------------
--- 🔑 TELA DE LOGIN (BASEADO NA FOTO 1)
+-- 🔑 TELA DE LOGIN (ESTILO FOTO)
 -----------------------------------------------------------
 local loginFrame = Instance.new("Frame")
-loginFrame.Size = UDim2.new(0, 550, 0, 320)
-loginFrame.Position = UDim2.new(0.5, -275, 0.5, -160)
+loginFrame.Size = UDim2.new(0, 550, 0, 350)
+loginFrame.Position = UDim2.new(0.5, -275, 0.5, -175)
 loginFrame.BackgroundColor3 = COLORS.BG
 loginFrame.Parent = sg
 Instance.new("UICorner", loginFrame)
-Instance.new("UIStroke", loginFrame).Color = Color3.fromRGB(40, 45, 55)
 
 local loginTitle = Instance.new("TextLabel")
-loginTitle.Size = UDim2.new(1, 0, 0, 60)
-loginTitle.Text = "PRIMION KEY SYSTEM V2.0"
+loginTitle.Size = UDim2.new(1,0,0,50)
+loginTitle.Text = "PRIMION KEY SYSTEM\n100 Robux - Lifetime Infinito"
 loginTitle.TextColor3 = COLORS.Gold
 loginTitle.Font = Enum.Font.GothamBold
-loginTitle.TextSize = 16
-loginTitle.BackgroundTransparency = 1
+loginTitle.TextSize = 14
 loginTitle.Parent = loginFrame
-
--- Layout Lado a Lado (Foto 1)
-local sideBtns = Instance.new("Frame")
-sideBtns.Size = UDim2.new(0, 200, 0, 200)
-sideBtns.Position = UDim2.new(0, 25, 0, 80)
-sideBtns.BackgroundTransparency = 1
-sideBtns.Parent = loginFrame
-local L1 = Instance.new("UIListLayout", sideBtns)
-L1.Padding = UDim.new(0, 10)
-
-local inputArea = Instance.new("Frame")
-inputArea.Size = UDim2.new(0, 280, 0, 200)
-inputArea.Position = UDim2.new(0, 245, 0, 80)
-inputArea.BackgroundTransparency = 1
-inputArea.Parent = loginFrame
-
--- Criar Botões de Login
-CreateButton(sideBtns, "GET KEY", COLORS.Accent, function() setclipboard("LINK_AQUI") end)
-CreateButton(sideBtns, "KEY PRIMION", COLORS.Gold, function() setclipboard(LINK_GAMEPASS) end)
-CreateButton(sideBtns, "SUPPORT", COLORS.Purple, function() end)
+loginTitle.BackgroundTransparency = 1
 
 local input = Instance.new("TextBox")
-input.Size = UDim2.new(1, 0, 0, 45)
-input.BackgroundColor3 = Color3.fromRGB(25, 27, 35)
-input.PlaceholderText = "Cole sua chave aqui..."
+input.Size = UDim2.new(0.8, 0, 0, 45)
+input.Position = UDim2.new(0.1, 0, 0, 100)
+input.BackgroundColor3 = COLORS.Sidebar
+input.PlaceholderText = "Cole sua key aqui..."
 input.Text = ""
-input.TextColor3 = COLORS.White
-input.Parent = inputArea
+input.TextColor3 = Color3.new(1,1,1)
+input.Parent = loginFrame
 Instance.new("UICorner", input)
-Instance.new("UIStroke", input).Color = Color3.fromRGB(60, 60, 60)
 
-local checkBtn = CreateButton(inputArea, "      CHECK KEY", COLORS.Accent, function()
+local btnGrid = Instance.new("Frame")
+btnGrid.Size = UDim2.new(0.8, 0, 0, 50)
+btnGrid.Position = UDim2.new(0.1, 0, 0, 160)
+btnGrid.BackgroundTransparency = 1
+btnGrid.Parent = loginFrame
+local layout = Instance.new("UIListLayout", btnGrid)
+layout.FillDirection = Enum.FillDirection.Horizontal
+layout.Padding = UDim.new(0, 10)
+
+local function QuickBtn(name, color, callback)
+    local b = Instance.new("TextButton")
+    b.Size = UDim2.new(0.32, 0, 1, 0)
+    b.BackgroundColor3 = color
+    b.Text = name
+    b.TextColor3 = Color3.new(1,1,1)
+    b.Font = Enum.Font.GothamBold
+    b.Parent = btnGrid
+    Instance.new("UICorner", b)
+    b.MouseButton1Click:Connect(callback)
+end
+
+QuickBtn("GET KEY", Color3.fromRGB(255, 100, 0), function() setclipboard("LINK_AQUI") end)
+QuickBtn("CHECK KEY", COLORS.Accent, function()
     if input.Text == KEY_CORRETA then
-        loginFrame:Destroy()
-        mainHub.Visible = true
-        toggleBtn.Visible = true
+        loginFrame:Destroy() -- Apaga a tela de login
+        mainHub.Visible = true -- Mostra o menu
+        toggleBtn.Visible = true -- Libera o botão das estrelinhas
     else
-        input.Text = "KEY INVÁLIDA!"
-        task.wait(1)
         input.Text = ""
+        input.PlaceholderText = "KEY INCORRETA!"
+        task.wait(1.5)
+        input.PlaceholderText = "Cole sua key aqui..."
     end
 end)
-checkBtn.Position = UDim2.new(0, 0, 0, 60)
-checkBtn.Size = UDim2.new(1, 0, 0, 50)
-checkBtn.TextXAlignment = Enum.TextXAlignment.Center
+QuickBtn("PREMIUM", COLORS.Gold, function() setclipboard(LINK_GAMEPASS) end)
