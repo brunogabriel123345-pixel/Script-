@@ -3,18 +3,20 @@ local player = Players.LocalPlayer
 local playerGui = player:WaitForChild("PlayerGui")
 local TweenService = game:GetService("TweenService")
 local UserInputService = game:GetService("UserInputService")
+local RunService = game:GetService("RunService")
 
 -- CONFIGURAÇÕES
 local KEY_CORRETA = "key-htpjvg"
 local LINK_GAMEPASS = "https://www.roblox.com/pt/game-pass/1731556830/Key-primion-scripy-killer"
 
--- CORES PREMIUM
+-- CORES E ESTILO
 local COLORS = {
-    BG = Color3.fromRGB(15, 17, 22),
-    Sidebar = Color3.fromRGB(20, 22, 28),
+    BG = Color3.fromRGB(10, 10, 15),
+    Sidebar = Color3.fromRGB(15, 15, 25),
     Accent = Color3.fromRGB(0, 255, 127),
     Gold = Color3.fromRGB(255, 200, 50),
-    Text = Color3.fromRGB(255, 255, 255)
+    Galaxy1 = Color3.fromRGB(48, 25, 82), -- Roxo Galáxia
+    Galaxy2 = Color3.fromRGB(10, 10, 35)  -- Azul Profundo
 }
 
 -- LIMPEZA
@@ -22,201 +24,182 @@ if playerGui:FindFirstChild("PrimionV4") then playerGui.PrimionV4:Destroy() end
 local sg = Instance.new("ScreenGui")
 sg.Name = "PrimionV4"
 sg.ResetOnSpawn = false
-sg.IgnoreGuiInset = true
 sg.Parent = playerGui
 
 -----------------------------------------------------------
--- FUNÇÃO: CRIAR BOTÃO DE TOGGLE
+-- FUNÇÃO: BOTÃO QUADRADO GALÁXIA (TOGGLE)
 -----------------------------------------------------------
-local function CriarToggleButton(mainHub)
+local function CriarBotaoGalaxia(mainFrame)
     local toggleBtn = Instance.new("TextButton")
-    toggleBtn.Name = "Toggle"
-    toggleBtn.Size = UDim2.new(0, 40, 0, 40)
-    toggleBtn.Position = UDim2.new(0, 10, 0, 10)
-    toggleBtn.BackgroundColor3 = COLORS.BG
-    toggleBtn.Text = "P"
-    toggleBtn.TextColor3 = COLORS.Accent
+    toggleBtn.Name = "GalaxyToggle"
+    toggleBtn.Size = UDim2.new(0, 50, 0, 50)
+    toggleBtn.Position = UDim2.new(0, 20, 0, 20)
+    toggleBtn.BackgroundColor3 = Color3.new(1,1,1)
+    toggleBtn.Text = "★"
+    toggleBtn.TextColor3 = Color3.new(1,1,1)
     toggleBtn.Font = Enum.Font.GothamBold
-    toggleBtn.TextSize = 20
+    toggleBtn.TextSize = 25
     toggleBtn.Parent = sg
-    Instance.new("UICorner", toggleBtn).CornerRadius = UDim.new(0, 8)
-    Instance.new("UIStroke", toggleBtn).Color = COLORS.Accent
+    
+    local gradient = Instance.new("UIGradient")
+    gradient.Color = ColorSequence.new({
+        ColorSequenceKeypoint.new(0, COLORS.Galaxy1),
+        ColorSequenceKeypoint.new(1, COLORS.Galaxy2)
+    })
+    gradient.Rotation = 45
+    gradient.Parent = toggleBtn
+    
+    Instance.new("UICorner", toggleBtn).CornerRadius = UDim.new(0, 10)
+    local stroke = Instance.new("UIStroke", toggleBtn)
+    stroke.Color = Color3.fromRGB(150, 50, 255)
+    stroke.Thickness = 2
 
-    toggleBtn.MouseButton1Click:Connect(function()
-        mainHub.Visible = not mainHub.Visible
-    end)
-end
-
------------------------------------------------------------
--- FUNÇÃO: HUB PRINCIPAL
------------------------------------------------------------
-local function AbrirHubPrincipal()
-    local mainHub = Instance.new("Frame")
-    mainHub.Name = "MainFrame"
-    mainHub.Size = UDim2.new(0, 650, 0, 400)
-    mainHub.Position = UDim2.new(0.5, -325, 0.5, -200)
-    mainHub.BackgroundColor3 = COLORS.BG
-    mainHub.Parent = sg
-    Instance.new("UICorner", mainHub).CornerRadius = UDim.new(0, 12)
-    Instance.new("UIStroke", mainHub).Color = COLORS.Accent
-
-    -- Arrastar GUI (Draggable)
+    -- Arrastar o botão
     local dragging, dragInput, dragStart, startPos
-    mainHub.InputBegan:Connect(function(input)
+    toggleBtn.InputBegan:Connect(function(input)
         if input.UserInputType == Enum.UserInputType.MouseButton1 then
-            dragging = true; dragStart = input.Position; startPos = mainHub.Position
+            dragging = true; dragStart = input.Position; startPos = toggleBtn.Position
         end
     end)
     UserInputService.InputChanged:Connect(function(input)
         if dragging and input.UserInputType == Enum.UserInputType.MouseMovement then
             local delta = input.Position - dragStart
-            mainHub.Position = UDim2.new(startPos.X.Scale, startPos.X.Offset + delta.X, startPos.Y.Scale, startPos.Y.Offset + delta.Y)
+            toggleBtn.Position = UDim2.new(startPos.X.Scale, startPos.X.Offset + delta.X, startPos.Y.Scale, startPos.Y.Offset + delta.Y)
         end
     end)
     UserInputService.InputEnded:Connect(function(input)
         if input.UserInputType == Enum.UserInputType.MouseButton1 then dragging = false end
     end)
 
+    toggleBtn.MouseButton1Click:Connect(function()
+        mainFrame.Visible = not mainFrame.Visible
+        TweenService:Create(toggleBtn, TweenInfo.new(0.3), {Rotation = toggleBtn.Rotation + 90}):Play()
+    end)
+end
+
+-----------------------------------------------------------
+-- FUNÇÕES DO HUB (EXEMPLOS REAIS)
+-----------------------------------------------------------
+local function AddButton(parent, text, callback)
+    local btn = Instance.new("TextButton")
+    btn.Size = UDim2.new(0.9, 0, 0, 35)
+    btn.BackgroundColor3 = Color3.fromRGB(30, 30, 50)
+    btn.Text = text
+    btn.TextColor3 = Color3.new(1,1,1)
+    btn.Font = Enum.Font.GothamSemibold
+    btn.Parent = parent
+    Instance.new("UICorner", btn)
+    btn.MouseButton1Click:Connect(callback)
+end
+
+-----------------------------------------------------------
+-- HUB PRINCIPAL
+-----------------------------------------------------------
+local function AbrirHubPrincipal()
+    local mainHub = Instance.new("Frame")
+    mainHub.Size = UDim2.new(0, 600, 0, 380)
+    mainHub.Position = UDim2.new(0.5, -300, 0.5, -190)
+    mainHub.BackgroundColor3 = COLORS.BG
+    mainHub.Parent = sg
+    Instance.new("UICorner", mainHub)
+    Instance.new("UIStroke", mainHub).Color = Color3.fromRGB(80, 80, 255)
+
     -- Sidebar
     local sidebar = Instance.new("Frame")
-    sidebar.Size = UDim2.new(0, 150, 1, 0)
+    sidebar.Size = UDim2.new(0, 140, 1, 0)
     sidebar.BackgroundColor3 = COLORS.Sidebar
     sidebar.Parent = mainHub
-    Instance.new("UICorner", sidebar).CornerRadius = UDim.new(0, 12)
-
+    Instance.new("UICorner", sidebar)
+    
     local sideLayout = Instance.new("UIListLayout", sidebar)
     sideLayout.Padding = UDim.new(0, 5)
-    sideLayout.HorizontalAlignment = Enum.HorizontalAlignment.Center
-    sideLayout.SortOrder = Enum.SortOrder.LayoutOrder
-
-    local sideTitle = Instance.new("TextLabel")
-    sideTitle.Size = UDim2.new(1, 0, 0, 50)
-    sideTitle.Text = "PRIMION V4"
-    sideTitle.TextColor3 = COLORS.Gold
-    sideTitle.Font = Enum.Font.GothamBold
-    sideTitle.TextSize = 18
-    sideTitle.BackgroundTransparency = 1
-    sideTitle.Parent = sidebar
+    sideLayout.HorizontalAlignment = "Center"
 
     local contentArea = Instance.new("Frame")
-    contentArea.Size = UDim2.new(1, -160, 1, -20)
-    contentArea.Position = UDim2.new(0, 155, 0, 10)
+    contentArea.Size = UDim2.new(1, -150, 1, -20)
+    contentArea.Position = UDim2.new(0, 145, 0, 10)
     contentArea.BackgroundTransparency = 1
     contentArea.Parent = mainHub
 
     local pages = {}
     local function CreatePage(name)
-        local page = Instance.new("ScrollingFrame")
-        page.Size = UDim2.new(1, 0, 1, 0)
-        page.Visible = false
-        page.BackgroundTransparency = 1
-        page.ScrollBarThickness = 2
-        page.Parent = contentArea
-        pages[name] = page
-        
-        local layout = Instance.new("UIListLayout", page)
-        layout.Padding = UDim.new(0, 8)
-        
-        local label = Instance.new("TextLabel")
-        label.Size = UDim2.new(1, 0, 0, 30)
-        label.Text = "--- SEÇÃO: " .. name:upper() .. " ---"
-        label.TextColor3 = COLORS.Accent
-        label.BackgroundTransparency = 1
-        label.Font = Enum.Font.GothamBold
-        label.Parent = page
-        
-        return page
+        local p = Instance.new("ScrollingFrame")
+        p.Size = UDim2.new(1, 0, 1, 0)
+        p.BackgroundTransparency = 1
+        p.Visible = false
+        p.ScrollBarThickness = 2
+        p.Parent = contentArea
+        local l = Instance.new("UIListLayout", p)
+        l.Padding = UDim.new(0, 10)
+        l.HorizontalAlignment = "Center"
+        pages[name] = p
+        return p
     end
 
-    local function AddTab(name)
-        local btn = Instance.new("TextButton")
-        btn.Size = UDim2.new(0.9, 0, 0, 40)
-        btn.BackgroundColor3 = Color3.fromRGB(30, 32, 40)
-        btn.Text = name
-        btn.TextColor3 = Color3.new(1,1,1)
-        btn.Font = Enum.Font.GothamMedium
-        btn.TextSize = 14
-        btn.Parent = sidebar
-        Instance.new("UICorner", btn)
-        
-        btn.MouseButton1Click:Connect(function()
-            for _, p in pairs(pages) do p.Visible = false end
+    -- Criação das Abas e Funções
+    local pPlayer = CreatePage("Player")
+    AddButton(pPlayer, "Velocidade Correr (50)", function() player.Character.Humanoid.WalkSpeed = 50 end)
+    AddButton(pPlayer, "Velocidade Normal (16)", function() player.Character.Humanoid.WalkSpeed = 16 end)
+    AddButton(pPlayer, "Pulo Alto (100)", function() player.Character.Humanoid.JumpPower = 100 end)
+
+    local pESP = CreatePage("ESP")
+    AddButton(pESP, "Ativar ESP (Highlight)", function()
+        for _, p in pairs(Players:GetPlayers()) do
+            if p ~= player and p.Character then
+                local h = Instance.new("Highlight", p.Character)
+                h.FillColor = COLORS.Accent
+            end
+        end
+    end)
+
+    local pFPS = CreatePage("FPS Killer")
+    AddButton(pFPS, "Remover Texturas (Boost FPS)", function()
+        for _, v in pairs(game:GetDescendants()) do
+            if v:IsA("Texture") or v:IsA("Decal") then v:Destroy() end
+        end
+    end)
+
+    local function AddTabBtn(name)
+        local b = Instance.new("TextButton")
+        b.Size = UDim2.new(0.9, 0, 0, 40)
+        b.Text = name
+        b.BackgroundColor3 = Color3.fromRGB(40,40,60)
+        b.TextColor3 = Color3.new(1,1,1)
+        b.Parent = sidebar
+        Instance.new("UICorner", b)
+        b.MouseButton1Click:Connect(function()
+            for _, pg in pairs(pages) do pg.Visible = false end
             pages[name].Visible = true
         end)
     end
 
-    CreatePage("Menu"); CreatePage("ESP"); CreatePage("FPS Killer"); CreatePage("Player"); CreatePage("Configuração")
-    AddTab("Menu"); AddTab("ESP"); AddTab("FPS Killer"); AddTab("Player"); AddTab("Configuração")
-
-    pages["Menu"].Visible = true
-    CriarToggleButton(mainHub) -- Ativa o toggle após o login
+    AddTabBtn("Player")
+    AddTabBtn("ESP")
+    AddTabBtn("FPS Killer")
+    
+    pages["Player"].Visible = true
+    CriarBotaoGalaxia(mainHub)
 end
 
 -----------------------------------------------------------
--- TELA DE LOGIN
+-- LOGIN (SIMPLIFICADO PARA O TESTE)
 -----------------------------------------------------------
-local loginFrame = Instance.new("Frame")
-loginFrame.Size = UDim2.new(0, 550, 0, 350)
-loginFrame.Position = UDim2.new(0.5, -275, 0.5, -175)
-loginFrame.BackgroundColor3 = COLORS.BG
-loginFrame.Parent = sg
-Instance.new("UICorner", loginFrame)
-Instance.new("UIStroke", loginFrame).Color = COLORS.Accent
-
-local promoMsg = Instance.new("TextLabel")
-promoMsg.Size = UDim2.new(1, 0, 0, 30)
-promoMsg.Position = UDim2.new(0, 0, 0, 60)
-promoMsg.Text = "⭐ Primion Lifetime: 100 Robux - Acesso Infinito ⭐"
-promoMsg.TextColor3 = COLORS.Gold
-promoMsg.Font = Enum.Font.GothamBold
-promoMsg.TextSize = 14
-promoMsg.BackgroundTransparency = 1
-promoMsg.Parent = loginFrame
+local login = Instance.new("Frame")
+login.Size = UDim2.new(0, 400, 0, 250)
+login.Position = UDim2.new(0.5, -200, 0.5, -125)
+login.BackgroundColor3 = COLORS.BG
+login.Parent = sg
+Instance.new("UICorner", login)
 
 local input = Instance.new("TextBox")
-input.Size = UDim2.new(0.8, 0, 0, 45)
-input.Position = UDim2.new(0.1, 0, 0, 110)
-input.BackgroundColor3 = COLORS.Sidebar
-input.PlaceholderText = "Cole sua chave aqui..."
-input.Text = ""
-input.TextColor3 = Color3.new(1,1,1)
-input.Parent = loginFrame
-Instance.new("UICorner", input)
+input.Size = UDim2.new(0.8, 0, 0, 40)
+input.Position = UDim2.new(0.1, 0, 0, 80)
+input.PlaceholderText = "Cole a Key aqui..."
+input.Parent = login
 
-local btnContainer = Instance.new("Frame")
-btnContainer.Size = UDim2.new(0.8, 0, 0, 50)
-btnContainer.Position = UDim2.new(0.1, 0, 0, 170)
-btnContainer.BackgroundTransparency = 1
-btnContainer.Parent = loginFrame
-
-local hLayout = Instance.new("UIListLayout", btnContainer)
-hLayout.FillDirection = Enum.FillDirection.Horizontal
-hLayout.Padding = UDim.new(0, 10)
-hLayout.HorizontalAlignment = Enum.HorizontalAlignment.Center
-
-local function QuickBtn(name, color, callback)
-    local b = Instance.new("TextButton")
-    b.Size = UDim2.new(0.3, 0, 1, 0)
-    b.BackgroundColor3 = color
-    b.Text = name
-    b.Font = Enum.Font.GothamBold
-    b.TextColor3 = Color3.new(1,1,1)
-    b.Parent = btnContainer
-    Instance.new("UICorner", b)
-    b.MouseButton1Click:Connect(callback)
-end
-
-QuickBtn("GET KEY", Color3.fromRGB(255, 100, 0), function() setclipboard("SEU_LINK_DE_KEY_AQUI") end)
-QuickBtn("CHECK KEY", COLORS.Accent, function()
-    -- Correção: string.gsub remove espaços extras que o usuário possa colar sem querer
-    if input.Text:gsub("%s+", "") == KEY_CORRETA then
-        loginFrame:Destroy()
+AddButton(login, "Entrar", function()
+    if input.Text == KEY_CORRETA then
+        login:Destroy()
         AbrirHubPrincipal()
-    else
-        input.Text = ""
-        input.PlaceholderText = "CHAVE INCORRETA!"
-        task.wait(2)
-        input.PlaceholderText = "Cole sua chave aqui..."
     end
 end)
-QuickBtn("PREMIUM", COLORS.Gold, function() setclipboard(LINK_GAMEPASS) end)
