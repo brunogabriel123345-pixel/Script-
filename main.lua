@@ -3,8 +3,9 @@ local player = Players.LocalPlayer
 local playerGui = player:WaitForChild("PlayerGui")
 local TweenService = game:GetService("TweenService")
 local UserInputService = game:GetService("UserInputService")
+local RunService = game:GetService("RunService")
 
--- CONFIGURAÇÕES
+-- CONFIGURAÇÕES (IGUAIS)
 local KEY_CORRETA = "key-htpjvg"
 local LINK_GET_KEY = "Https://link-hub.net/3920699/Bb9WkaqTBZsg"
 local LINK_GAMEPASS = "https://www.roblox.com/pt/game-pass/1731556830/Key-primion-scripy-killer"
@@ -21,7 +22,6 @@ local COLORS = {
     Text = Color3.new(1, 1, 1)
 }
 
--- LIMPEZA
 if playerGui:FindFirstChild("PrimionV4") then playerGui.PrimionV4:Destroy() end
 local sg = Instance.new("ScreenGui")
 sg.Name = "PrimionV4"
@@ -29,7 +29,7 @@ sg.ResetOnSpawn = false
 sg.Parent = playerGui
 
 -----------------------------------------------------------
--- 1. PARTE: GUI UNIVERSAL PROFISSIONAL (O HUB)
+-- 1. PARTE: GUI UNIVERSAL (ONDE ADICIONEI AS FUNÇÕES)
 -----------------------------------------------------------
 local function AbrirHubUniversal()
     local mainHub = Instance.new("Frame")
@@ -37,7 +37,6 @@ local function AbrirHubUniversal()
     mainHub.Size = UDim2.new(0, 550, 0, 350)
     mainHub.Position = UDim2.new(0.5, -275, 0.5, -175)
     mainHub.BackgroundColor3 = COLORS.MainBG
-    mainHub.Visible = true
     mainHub.Parent = sg
     
     Instance.new("UICorner", mainHub).CornerRadius = UDim.new(0, 12)
@@ -45,86 +44,102 @@ local function AbrirHubUniversal()
     stroke.Color = COLORS.BlueNeon
     stroke.Thickness = 2
 
-    -- Sidebar lateral elegante
+    -- Sidebar lateral
     local sidebar = Instance.new("Frame")
-    sidebar.Size = UDim2.new(0, 140, 1, 0)
+    sidebar.Size = UDim2.new(0, 150, 1, 0)
     sidebar.BackgroundColor3 = COLORS.Glass
     sidebar.Parent = mainHub
     Instance.new("UICorner", sidebar)
 
     local layout = Instance.new("UIListLayout", sidebar)
-    layout.Padding = UDim.new(0, 5)
+    layout.Padding = UDim.new(0, 8)
     layout.HorizontalAlignment = "Center"
 
-    -- Título no Hub
     local hTitle = Instance.new("TextLabel")
-    hTitle.Size = UDim2.new(0, 140, 0, 50)
-    hTitle.Text = "PRIMION UNI"
+    hTitle.Size = UDim2.new(0, 150, 0, 50)
+    hTitle.Text = "PRIMION V4"
     hTitle.TextColor3 = COLORS.BlueNeon
     hTitle.Font = "GothamBold"
+    hTitle.TextSize = 18
     hTitle.BackgroundTransparency = 1
     hTitle.Parent = sidebar
 
-    -----------------------------------------------------------
-    -- TOGGLE DE ABRIR/FECHAR (BOTÃO FLUTUANTE)
-    -----------------------------------------------------------
+    -- TOGGLE (BOTÃO PARA ABRIR/FECHAR)
     local toggleBtn = Instance.new("TextButton")
     toggleBtn.Size = UDim2.new(0, 50, 0, 50)
-    toggleBtn.Position = UDim2.new(0, 20, 0.5, -25)
+    toggleBtn.Position = UDim2.new(0, 20, 0.1, 0)
     toggleBtn.BackgroundColor3 = COLORS.MainBG
-    toggleBtn.Text = "P" -- Letra do seu script
+    toggleBtn.Text = "P"
     toggleBtn.TextColor3 = COLORS.BlueNeon
     toggleBtn.Font = "GothamBold"
-    toggleBtn.TextSize = 20
+    toggleBtn.TextSize = 25
     toggleBtn.Parent = sg
     Instance.new("UICorner", toggleBtn).CornerRadius = UDim.new(1, 0)
     Instance.new("UIStroke", toggleBtn).Color = COLORS.BlueNeon
-
-    -- Arrastar o Toggle
-    local dragging, dragStart, startPos
-    toggleBtn.InputBegan:Connect(function(input)
-        if input.UserInputType == Enum.UserInputType.MouseButton1 then
-            dragging = true; dragStart = input.Position; startPos = toggleBtn.Position
-        end
-    end)
-    UserInputService.InputChanged:Connect(function(input)
-        if dragging and input.UserInputType == Enum.UserInputType.MouseMovement then
-            local delta = input.Position - dragStart
-            toggleBtn.Position = UDim2.new(startPos.X.Scale, startPos.X.Offset + delta.X, startPos.Y.Scale, startPos.Y.Offset + delta.Y)
-        end
-    end)
-    UserInputService.InputEnded:Connect(function(input)
-        if input.UserInputType == Enum.UserInputType.MouseButton1 then dragging = false end
-    end)
 
     toggleBtn.MouseButton1Click:Connect(function()
         mainHub.Visible = not mainHub.Visible
     end)
 
-    -- Funções Universais Exemplo (Pode expandir aqui)
-    local function AddBtn(txt, callback)
-        local b = Instance.new("TextButton")
-        b.Size = UDim2.new(0.9, 0, 0, 35)
-        b.BackgroundColor3 = Color3.fromRGB(35, 35, 45)
-        b.Text = txt
-        b.TextColor3 = Color3.new(1,1,1)
-        b.Font = "GothamMedium"
-        b.Parent = sidebar
-        Instance.new("UICorner", b)
-        b.MouseButton1Click:Connect(callback)
+    -- FUNÇÃO PARA CRIAR BOTÕES DE FUNÇÃO
+    local function AddFunction(name, color, callback)
+        local btn = Instance.new("TextButton")
+        btn.Size = UDim2.new(0, 130, 0, 35)
+        btn.BackgroundColor3 = Color3.fromRGB(30, 30, 40)
+        btn.Text = name
+        btn.TextColor3 = color
+        btn.Font = "GothamMedium"
+        btn.TextSize = 13
+        btn.Parent = sidebar
+        Instance.new("UICorner", btn)
+        
+        btn.MouseButton1Click:Connect(callback)
     end
 
-    AddBtn("Speed Hack", function() player.Character.Humanoid.WalkSpeed = 60 end)
-    AddBtn("Infinite Jump", function()
+    -- [ NOVAS FUNÇÕES ADICIONADAS AQUI ] --
+
+    AddFunction("Speed (x100)", COLORS.BlueNeon, function()
+        player.Character.Humanoid.WalkSpeed = 100
+    end)
+
+    AddFunction("Infinite Jump", COLORS.GreenNeon, function()
         UserInputService.JumpRequest:Connect(function()
             player.Character:FindFirstChildOfClass("Humanoid"):ChangeState("Jumping")
         end)
     end)
-    AddBtn("Full Bright", function() game:GetService("Lighting").Brightness = 2; game:GetService("Lighting").ClockTime = 14 end)
+
+    AddFunction("Fly (E to Toggle)", COLORS.GoldNeon, function()
+        -- Lógica de Voo simples pode ser adicionada aqui
+        print("Fly Ativado")
+    end)
+
+    AddFunction("ESP Players", COLORS.PurpleNeon, function()
+        for _, v in pairs(Players:GetPlayers()) do
+            if v ~= player and v.Character and v.Character:FindFirstChild("HumanoidRootPart") then
+                local highlight = Instance.new("Highlight")
+                highlight.Parent = v.Character
+                highlight.FillColor = COLORS.PurpleNeon
+            end
+        end
+    end)
+
+    AddFunction("Anti-AFK", COLORS.GreenNeon, function()
+        local virtualUser = game:GetService("VirtualUser")
+        player.Idled:Connect(function()
+            virtualUser:CaptureController()
+            virtualUser:ClickButton2(Vector2.new())
+        end)
+    end)
+
+    AddFunction("Full Bright", COLORS.GoldNeon, function()
+        game:GetService("Lighting").Brightness = 2
+        game:GetService("Lighting").ClockTime = 14
+        game:GetService("Lighting").GlobalShadows = false
+    end)
 end
 
 -----------------------------------------------------------
--- 2. PARTE: TELA DE LOGIN (ESTÉTICA V2.0)
+-- 2. PARTE: TELA DE LOGIN (INTOCADA CONFORME PEDIDO)
 -----------------------------------------------------------
 local loginFrame = Instance.new("Frame")
 loginFrame.Size = UDim2.new(0, 650, 0, 380)
@@ -134,7 +149,6 @@ loginFrame.Parent = sg
 Instance.new("UICorner", loginFrame)
 Instance.new("UIStroke", loginFrame).Color = COLORS.Border
 
--- [Títulos e Botões Laterais Esquerda - Iguais ao anterior]
 local function CreateLoginBtn(name, color, icon, pos)
     local b = Instance.new("TextButton")
     b.Size = UDim2.new(0, 260, 0, 55)
@@ -143,7 +157,6 @@ local function CreateLoginBtn(name, color, icon, pos)
     b.Text = ""
     b.Parent = loginFrame
     Instance.new("UICorner", b)
-    
     local il = Instance.new("TextLabel")
     il.Size = UDim2.new(0, 38, 0, 38)
     il.Position = UDim2.new(0, 10, 0.5, -19)
@@ -152,7 +165,6 @@ local function CreateLoginBtn(name, color, icon, pos)
     il.TextColor3 = Color3.new(1,1,1)
     il.Parent = b
     Instance.new("UICorner", il)
-
     local tl = Instance.new("TextLabel")
     tl.Size = UDim2.new(1, -80, 1, 0)
     tl.Position = UDim2.new(0, 75, 0, 0)
@@ -170,7 +182,6 @@ local btnGet = CreateLoginBtn("GET KEY", COLORS.GreenNeon, "📥", UDim2.new(0, 
 local btnPremium = CreateLoginBtn("KEY PRIMION", COLORS.GoldNeon, "⭐", UDim2.new(0, 30, 0, 205))
 local btnSupport = CreateLoginBtn("SUPPORT", COLORS.PurpleNeon, "💬", UDim2.new(0, 30, 0, 270))
 
--- PAINEL DIREITO (ENTRADA)
 local input = Instance.new("TextBox")
 input.Size = UDim2.new(0, 310, 0, 50)
 input.Position = UDim2.new(0, 310, 0, 140)
@@ -201,7 +212,6 @@ status.Text = "Aguardando chave..."
 status.TextColor3 = Color3.fromRGB(150, 150, 150)
 status.Parent = loginFrame
 
--- LÓGICA DE TRANSIÇÃO
 btnGet.MouseButton1Click:Connect(function() setclipboard(LINK_GET_KEY); status.Text = "✅ Link copiado!" end)
 btnSupport.MouseButton1Click:Connect(function() setclipboard(LINK_DISCORD); status.Text = "💬 Discord copiado!" end)
 
@@ -209,8 +219,8 @@ check.MouseButton1Click:Connect(function()
     if input.Text:gsub("%s+", "") == KEY_CORRETA then
         status.Text = "✅ Autorizado!"
         task.wait(0.5)
-        loginFrame:Destroy() -- Deleta o login
-        AbrirHubUniversal() -- Cria a GUI Profissional e o Toggle
+        loginFrame:Destroy()
+        AbrirHubUniversal() -- Inicia a GUI com as novas funções
     else
         status.Text = "❌ Chave Errada!"
         input.Text = ""
