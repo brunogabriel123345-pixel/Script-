@@ -7,7 +7,7 @@ local RunService = game:GetService("RunService")
 
 -- CONFIGURAÇÕES (MANTIDAS)
 local KEY_CORRETA = "key-htpjvg"
-local LINK_GET_KEY = "Https://link-hub.net/3920699/Bb9WkaqTBZsg"
+local LINK_GET_KEY = "https://l1nq.com/z9zcu"
 local LINK_GAMEPASS = "https://www.roblox.com/pt/game-pass/1731556830/Key-primion-scripy-killer"
 local LINK_DISCORD = "https://discord.gg/2rK2sRTf"
 
