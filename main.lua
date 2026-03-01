@@ -28,13 +28,13 @@ sg.ResetOnSpawn = false
 sg.Parent = playerGui
 
 -----------------------------------------------------------
--- 1. PARTE: GUI UNIVERSAL PROFISSIONAL (COM ON/OFF E BOOST FPS)
+-- 1. PARTE: GUI UNIVERSAL PROFISSIONAL (CORREÇÃO DE VISIBILIDADE)
 -----------------------------------------------------------
 local function AbrirHubUniversal()
     local mainHub = Instance.new("Frame")
     mainHub.Name = "UniversalHub"
-    mainHub.Size = UDim2.new(0, 500, 0, 320)
-    mainHub.Position = UDim2.new(0.5, -250, 0.5, -160)
+    mainHub.Size = UDim2.new(0, 450, 0, 350)
+    mainHub.Position = UDim2.new(0.5, -225, 0.5, -175)
     mainHub.BackgroundColor3 = COLORS.MainBG
     mainHub.BorderSizePixel = 0
     mainHub.Parent = sg
@@ -44,6 +44,7 @@ local function AbrirHubUniversal()
     stroke.Color = COLORS.BlueNeon
     stroke.Thickness = 2
 
+    -- Barra de Título
     local topBar = Instance.new("Frame")
     topBar.Size = UDim2.new(1, 0, 0, 40)
     topBar.BackgroundColor3 = COLORS.Glass
@@ -59,43 +60,49 @@ local function AbrirHubUniversal()
     hTitle.TextSize = 16
     hTitle.Parent = topBar
 
+    -- Contentor de Funções (ScrollingFrame corrigido)
     local scroll = Instance.new("ScrollingFrame")
-    scroll.Size = UDim2.new(1, -20, 1, -60)
-    scroll.Position = UDim2.new(0, 10, 0, 50)
+    scroll.Size = UDim2.new(1, -20, 1, -55)
+    scroll.Position = UDim2.new(0, 10, 0, 45)
     scroll.BackgroundTransparency = 1
-    scroll.CanvasSize = UDim2.new(0, 0, 2, 0)
-    scroll.ScrollBarThickness = 4
+    scroll.BorderSizePixel = 0
+    scroll.CanvasSize = UDim2.new(0, 0, 0, 500) -- Espaço vertical suficiente
+    scroll.ScrollBarThickness = 3
+    scroll.ScrollBarImageColor3 = COLORS.BlueNeon
     scroll.Parent = mainHub
 
-    local layout = Instance.new("UIGridLayout", scroll)
-    layout.CellSize = UDim2.new(0, 150, 0, 40)
-    layout.CellPadding = UDim2.new(0, 10, 0, 10)
+    local layout = Instance.new("UIListLayout", scroll)
+    layout.Padding = UDim.new(0, 8)
+    layout.HorizontalAlignment = Enum.HorizontalAlignment.Center
 
-    -- Toggle Button (P)
+    -- Botão Flutuante "P" para abrir/fechar
     local toggleBtn = Instance.new("TextButton")
-    toggleBtn.Size = UDim2.new(0, 45, 0, 45)
-    toggleBtn.Position = UDim2.new(0, 10, 0, 10)
+    toggleBtn.Size = UDim2.new(0, 50, 0, 50)
+    toggleBtn.Position = UDim2.new(0, 20, 0, 20)
     toggleBtn.BackgroundColor3 = COLORS.MainBG
     toggleBtn.Text = "P"
     toggleBtn.TextColor3 = COLORS.BlueNeon
     toggleBtn.Font = Enum.Font.GothamBold
-    toggleBtn.TextSize = 22
+    toggleBtn.TextSize = 25
     toggleBtn.Parent = sg
     Instance.new("UICorner", toggleBtn).CornerRadius = UDim.new(1, 0)
-    Instance.new("UIStroke", toggleBtn).Color = COLORS.BlueNeon
+    local tStroke = Instance.new("UIStroke", toggleBtn)
+    tStroke.Color = COLORS.BlueNeon
+    tStroke.Thickness = 2
 
     toggleBtn.MouseButton1Click:Connect(function()
         mainHub.Visible = not mainHub.Visible
     end)
 
-    -- FUNÇÃO PARA CRIAR BOTÕES COM ESTADO ON/OFF
+    -- FUNÇÃO PARA CRIAR BOTÕES ON/OFF PROFISSIONAIS
     local function AddToggle(name, defaultColor, callback)
         local btn = Instance.new("TextButton")
+        btn.Size = UDim2.new(0.95, 0, 0, 45) -- Tamanho fixo para aparecerem na lista
         btn.BackgroundColor3 = COLORS.Glass
-        btn.Text = name .. ": OFF"
+        btn.Text = name .. " [OFF]"
         btn.TextColor3 = defaultColor
-        btn.Font = Enum.Font.GothamMedium
-        btn.TextSize = 13
+        btn.Font = Enum.Font.GothamBold
+        btn.TextSize = 14
         btn.Parent = scroll
         Instance.new("UICorner", btn)
         local s = Instance.new("UIStroke", btn)
@@ -104,20 +111,36 @@ local function AbrirHubUniversal()
         local state = false
         btn.MouseButton1Click:Connect(function()
             state = not state
-            btn.Text = name .. (state and ": ON" or ": OFF")
+            btn.Text = name .. (state and " [ON]" or " [OFF]")
             btn.TextColor3 = state and COLORS.GreenNeon or defaultColor
+            s.Color = state and COLORS.GreenNeon or COLORS.Border
             callback(state)
         end)
     end
 
-    -- LISTA DE FUNÇÕES ATUALIZADA
+    -----------------------------------------------------------
+    -- LISTA DE FUNÇÕES (AGORA COM VISIBILIDADE TOTAL)
+    -----------------------------------------------------------
     
-    AddToggle("Speed Hack", COLORS.BlueNeon, function(on)
+    AddToggle("Boost FPS", COLORS.BlueNeon, function(on)
+        if on then
+            for _, v in pairs(game:GetDescendants()) do
+                if v:IsA("BasePart") or v:IsA("Decal") or v:IsA("Texture") then
+                    v.Material = Enum.Material.SmoothPlastic
+                    if v:IsA("Decal") or v:IsA("Texture") then v.Transparency = 1 end
+                end
+            end
+            settings().Rendering.QualityLevel = Enum.QualityLevel.Level01
+        end
+    end)
+
+    AddToggle("Speed Hack (100)", COLORS.BlueNeon, function(on)
         player.Character.Humanoid.WalkSpeed = on and 100 or 16
     end)
 
-    AddToggle("Super Jump", COLORS.GreenNeon, function(on)
+    AddToggle("Super Jump (150)", COLORS.GreenNeon, function(on)
         player.Character.Humanoid.JumpPower = on and 150 or 50
+        player.Character.Humanoid.UseJumpPower = true
     end)
 
     AddToggle("ESP Players", COLORS.PurpleNeon, function(on)
@@ -138,20 +161,6 @@ local function AbrirHubUniversal()
         end
     end)
 
-    AddToggle("Boost FPS", COLORS.BlueNeon, function(on)
-        if on then
-            for _, v in pairs(game:GetDescendants()) do
-                if v:IsA("BasePart") or v:IsA("Decal") then
-                    v.Material = Enum.Material.SmoothPlastic
-                    if v:IsA("Decal") then v.Transparency = 1 end
-                end
-            end
-            settings().Rendering.QualityLevel = 1
-        else
-            print("Desligue o script e entre em um novo servidor para resetar texturas.")
-        end
-    end)
-
     AddToggle("Full Bright", COLORS.GoldNeon, function(on)
         game:GetService("Lighting").Brightness = on and 2 or 1
         game:GetService("Lighting").ClockTime = on and 14 or 12
@@ -168,7 +177,7 @@ local function AbrirHubUniversal()
 end
 
 -----------------------------------------------------------
--- 2. PARTE: TELA DE LOGIN (SEM ALTERAÇÕES)
+-- 2. PARTE: TELA DE LOGIN (MANTIDA IGUAL)
 -----------------------------------------------------------
 local loginFrame = Instance.new("Frame")
 loginFrame.Size = UDim2.new(0, 650, 0, 380)
@@ -249,7 +258,7 @@ check.MouseButton1Click:Connect(function()
         status.Text = "✅ Autorizado!"
         task.wait(0.5)
         loginFrame:Destroy()
-        AbrirHubUniversal()
+        AbrirHubUniversal() -- Inicia o Hub com as opções visíveis
     else
         status.Text = "❌ Chave Errada!"
         input.Text = ""
