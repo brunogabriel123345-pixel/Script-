@@ -6,7 +6,7 @@ local UserInputService = game:GetService("UserInputService")
 
 -- CONFIGURAÇÕES
 local KEY_CORRETA = "key-htpjvg"
-local LINK_GET_KEY = "Https://link-hub.net/3920699/Bb9WkaqTBZsg"
+local LINK_GET_KEY = "https://link-hub.net/3920699/Bb9WkaqTBZsg"
 local LINK_GAMEPASS = "https://www.roblox.com/pt/game-pass/1731556830/Key-primion-scripy-killer"
 local LINK_DISCORD = "https://discord.gg/2rK2sRTf" -- NOVO LINK ATUALIZADO
 
