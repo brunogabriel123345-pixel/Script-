@@ -3,8 +3,9 @@ local player = Players.LocalPlayer
 local playerGui = player:WaitForChild("PlayerGui")
 local TweenService = game:GetService("TweenService")
 local UserInputService = game:GetService("UserInputService")
+local RunService = game:GetService("RunService")
 
--- CONFIGURAÇÕES (INTOCADAS)
+-- CONFIGURAÇÕES (MANTIDAS)
 local KEY_CORRETA = "key-htpjvg"
 local LINK_GET_KEY = "Https://link-hub.net/3920699/Bb9WkaqTBZsg"
 local LINK_GAMEPASS = "https://www.roblox.com/pt/game-pass/1731556830/Key-primion-scripy-killer"
@@ -28,7 +29,7 @@ sg.ResetOnSpawn = false
 sg.Parent = playerGui
 
 -----------------------------------------------------------
--- 1. PARTE: GUI UNIVERSAL PROFISSIONAL (CORREÇÃO DE VISIBILIDADE)
+-- 1. PARTE: GUI UNIVERSAL (LAYOUT MANTIDO + NOVAS FUNÇÕES)
 -----------------------------------------------------------
 local function AbrirHubUniversal()
     local mainHub = Instance.new("Frame")
@@ -44,7 +45,6 @@ local function AbrirHubUniversal()
     stroke.Color = COLORS.BlueNeon
     stroke.Thickness = 2
 
-    -- Barra de Título
     local topBar = Instance.new("Frame")
     topBar.Size = UDim2.new(1, 0, 0, 40)
     topBar.BackgroundColor3 = COLORS.Glass
@@ -60,13 +60,12 @@ local function AbrirHubUniversal()
     hTitle.TextSize = 16
     hTitle.Parent = topBar
 
-    -- Contentor de Funções (ScrollingFrame corrigido)
     local scroll = Instance.new("ScrollingFrame")
     scroll.Size = UDim2.new(1, -20, 1, -55)
     scroll.Position = UDim2.new(0, 10, 0, 45)
     scroll.BackgroundTransparency = 1
     scroll.BorderSizePixel = 0
-    scroll.CanvasSize = UDim2.new(0, 0, 0, 500) -- Espaço vertical suficiente
+    scroll.CanvasSize = UDim2.new(0, 0, 0, 550)
     scroll.ScrollBarThickness = 3
     scroll.ScrollBarImageColor3 = COLORS.BlueNeon
     scroll.Parent = mainHub
@@ -75,7 +74,6 @@ local function AbrirHubUniversal()
     layout.Padding = UDim.new(0, 8)
     layout.HorizontalAlignment = Enum.HorizontalAlignment.Center
 
-    -- Botão Flutuante "P" para abrir/fechar
     local toggleBtn = Instance.new("TextButton")
     toggleBtn.Size = UDim2.new(0, 50, 0, 50)
     toggleBtn.Position = UDim2.new(0, 20, 0, 20)
@@ -86,18 +84,15 @@ local function AbrirHubUniversal()
     toggleBtn.TextSize = 25
     toggleBtn.Parent = sg
     Instance.new("UICorner", toggleBtn).CornerRadius = UDim.new(1, 0)
-    local tStroke = Instance.new("UIStroke", toggleBtn)
-    tStroke.Color = COLORS.BlueNeon
-    tStroke.Thickness = 2
+    Instance.new("UIStroke", toggleBtn).Color = COLORS.BlueNeon
 
     toggleBtn.MouseButton1Click:Connect(function()
         mainHub.Visible = not mainHub.Visible
     end)
 
-    -- FUNÇÃO PARA CRIAR BOTÕES ON/OFF PROFISSIONAIS
     local function AddToggle(name, defaultColor, callback)
         local btn = Instance.new("TextButton")
-        btn.Size = UDim2.new(0.95, 0, 0, 45) -- Tamanho fixo para aparecerem na lista
+        btn.Size = UDim2.new(0.95, 0, 0, 45)
         btn.BackgroundColor3 = COLORS.Glass
         btn.Text = name .. " [OFF]"
         btn.TextColor3 = defaultColor
@@ -119,26 +114,60 @@ local function AbrirHubUniversal()
     end
 
     -----------------------------------------------------------
-    -- LISTA DE FUNÇÕES (AGORA COM VISIBILIDADE TOTAL)
+    -- FUNÇÕES ADICIONADAS/ATUALIZADAS
     -----------------------------------------------------------
-    
-    AddToggle("Boost FPS", COLORS.BlueNeon, function(on)
-        if on then
-            for _, v in pairs(game:GetDescendants()) do
-                if v:IsA("BasePart") or v:IsA("Decal") or v:IsA("Texture") then
-                    v.Material = Enum.Material.SmoothPlastic
-                    if v:IsA("Decal") or v:IsA("Texture") then v.Transparency = 1 end
+
+    -- FLY SYSTEM
+    local flying = false
+    local flySpeed = 50
+    AddToggle("Fly", COLORS.GoldNeon, function(on)
+        flying = on
+        local char = player.Character or player.CharacterAdded:Wait()
+        local hrp = char:WaitForChild("HumanoidRootPart")
+        
+        if flying then
+            local bv = Instance.new("BodyVelocity", hrp)
+            bv.Name = "FlyBV"
+            bv.MaxForce = Vector3.new(math.huge, math.huge, math.huge)
+            bv.Velocity = Vector3.new(0,0,0)
+            
+            task.spawn(function()
+                while flying do
+                    local cam = workspace.CurrentCamera.CFrame
+                    local moveDir = Vector3.new(0,0,0)
+                    if UserInputService:IsKeyDown(Enum.KeyCode.W) then moveDir = moveDir + cam.LookVector end
+                    if UserInputService:IsKeyDown(Enum.KeyCode.S) then moveDir = moveDir - cam.LookVector end
+                    if UserInputService:IsKeyDown(Enum.KeyCode.A) then moveDir = moveDir - cam.RightVector end
+                    if UserInputService:IsKeyDown(Enum.KeyCode.D) then moveDir = moveDir + cam.RightVector end
+                    bv.Velocity = moveDir * flySpeed
+                    RunService.RenderStepped:Wait()
                 end
-            end
-            settings().Rendering.QualityLevel = Enum.QualityLevel.Level01
+                bv:Destroy()
+            end)
         end
     end)
 
-    AddToggle("Speed Hack (100)", COLORS.BlueNeon, function(on)
+    -- BOOST FPS (REMOVE TEXTURAS)
+    AddToggle("Boost FPS", COLORS.BlueNeon, function(on)
+        if on then
+            for _, v in pairs(game:GetDescendants()) do
+                if v:IsA("BasePart") then
+                    v.Material = Enum.Material.SmoothPlastic
+                elseif v:IsA("Decal") or v:IsA("Texture") then
+                    v:Destroy()
+                elseif v:IsA("SpecialMesh") then
+                    v.TextureId = ""
+                end
+            end
+            settings().Rendering.QualityLevel = 1
+        end
+    end)
+
+    AddToggle("Speed Hack", COLORS.BlueNeon, function(on)
         player.Character.Humanoid.WalkSpeed = on and 100 or 16
     end)
 
-    AddToggle("Super Jump (150)", COLORS.GreenNeon, function(on)
+    AddToggle("Super Jump", COLORS.GreenNeon, function(on)
         player.Character.Humanoid.JumpPower = on and 150 or 50
         player.Character.Humanoid.UseJumpPower = true
     end)
@@ -164,20 +193,11 @@ local function AbrirHubUniversal()
     AddToggle("Full Bright", COLORS.GoldNeon, function(on)
         game:GetService("Lighting").Brightness = on and 2 or 1
         game:GetService("Lighting").ClockTime = on and 14 or 12
-        game:GetService("Lighting").GlobalShadows = not on
-    end)
-
-    AddToggle("Anti-AFK", COLORS.GreenNeon, function(on)
-        _G.AntiAFK = on
-        while _G.AntiAFK do
-            game:GetService("VirtualUser"):Button2Down(Vector2.new(0,0), workspace.CurrentCamera.CFrame)
-            task.wait(30)
-        end
     end)
 end
 
 -----------------------------------------------------------
--- 2. PARTE: TELA DE LOGIN (MANTIDA IGUAL)
+-- 2. PARTE: TELA DE LOGIN (INTOCADA)
 -----------------------------------------------------------
 local loginFrame = Instance.new("Frame")
 loginFrame.Size = UDim2.new(0, 650, 0, 380)
@@ -258,7 +278,7 @@ check.MouseButton1Click:Connect(function()
         status.Text = "✅ Autorizado!"
         task.wait(0.5)
         loginFrame:Destroy()
-        AbrirHubUniversal() -- Inicia o Hub com as opções visíveis
+        AbrirHubUniversal()
     else
         status.Text = "❌ Chave Errada!"
         input.Text = ""
