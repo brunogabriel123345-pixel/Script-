@@ -3,9 +3,8 @@ local player = Players.LocalPlayer
 local playerGui = player:WaitForChild("PlayerGui")
 local TweenService = game:GetService("TweenService")
 local UserInputService = game:GetService("UserInputService")
-local RunService = game:GetService("RunService")
 
--- CONFIGURAÇÕES (IGUAIS)
+-- CONFIGURAÇÕES (INTOCADAS)
 local KEY_CORRETA = "key-htpjvg"
 local LINK_GET_KEY = "Https://link-hub.net/3920699/Bb9WkaqTBZsg"
 local LINK_GAMEPASS = "https://www.roblox.com/pt/game-pass/1731556830/Key-primion-scripy-killer"
@@ -29,50 +28,60 @@ sg.ResetOnSpawn = false
 sg.Parent = playerGui
 
 -----------------------------------------------------------
--- 1. PARTE: GUI UNIVERSAL (ONDE ADICIONEI AS FUNÇÕES)
+-- 1. PARTE: GUI UNIVERSAL PROFISSIONAL (CORRIGIDA)
 -----------------------------------------------------------
 local function AbrirHubUniversal()
     local mainHub = Instance.new("Frame")
     mainHub.Name = "UniversalHub"
-    mainHub.Size = UDim2.new(0, 550, 0, 350)
-    mainHub.Position = UDim2.new(0.5, -275, 0.5, -175)
+    mainHub.Size = UDim2.new(0, 500, 0, 320)
+    mainHub.Position = UDim2.new(0.5, -250, 0.5, -160)
     mainHub.BackgroundColor3 = COLORS.MainBG
+    mainHub.BorderSizePixel = 0
     mainHub.Parent = sg
     
-    Instance.new("UICorner", mainHub).CornerRadius = UDim.new(0, 12)
+    Instance.new("UICorner", mainHub).CornerRadius = UDim.new(0, 10)
     local stroke = Instance.new("UIStroke", mainHub)
     stroke.Color = COLORS.BlueNeon
     stroke.Thickness = 2
 
-    -- Sidebar lateral
-    local sidebar = Instance.new("Frame")
-    sidebar.Size = UDim2.new(0, 150, 1, 0)
-    sidebar.BackgroundColor3 = COLORS.Glass
-    sidebar.Parent = mainHub
-    Instance.new("UICorner", sidebar)
-
-    local layout = Instance.new("UIListLayout", sidebar)
-    layout.Padding = UDim.new(0, 8)
-    layout.HorizontalAlignment = "Center"
+    -- Barra de Título do Hub
+    local topBar = Instance.new("Frame")
+    topBar.Size = UDim2.new(1, 0, 0, 40)
+    topBar.BackgroundColor3 = COLORS.Glass
+    topBar.Parent = mainHub
+    Instance.new("UICorner", topBar)
 
     local hTitle = Instance.new("TextLabel")
-    hTitle.Size = UDim2.new(0, 150, 0, 50)
-    hTitle.Text = "PRIMION V4"
-    hTitle.TextColor3 = COLORS.BlueNeon
-    hTitle.Font = "GothamBold"
-    hTitle.TextSize = 18
+    hTitle.Size = UDim2.new(1, 0, 1, 0)
     hTitle.BackgroundTransparency = 1
-    hTitle.Parent = sidebar
+    hTitle.Text = "PRIMION UNIVERSAL V4"
+    hTitle.TextColor3 = COLORS.BlueNeon
+    hTitle.Font = Enum.Font.GothamBold
+    hTitle.TextSize = 16
+    hTitle.Parent = topBar
 
-    -- TOGGLE (BOTÃO PARA ABRIR/FECHAR)
+    -- Área de Funções com Scroll (Para garantir que apareçam)
+    local scroll = Instance.new("ScrollingFrame")
+    scroll.Size = UDim2.new(1, -20, 1, -60)
+    scroll.Position = UDim2.new(0, 10, 0, 50)
+    scroll.BackgroundTransparency = 1
+    scroll.CanvasSize = UDim2.new(0, 0, 2, 0) -- Espaço para muitos botões
+    scroll.ScrollBarThickness = 4
+    scroll.Parent = mainHub
+
+    local layout = Instance.new("UIGridLayout", scroll)
+    layout.CellSize = UDim2.new(0, 150, 0, 40)
+    layout.CellPadding = UDim2.new(0, 10, 0, 10)
+
+    -- Botão Toogle (Abrir/Fechar)
     local toggleBtn = Instance.new("TextButton")
-    toggleBtn.Size = UDim2.new(0, 50, 0, 50)
-    toggleBtn.Position = UDim2.new(0, 20, 0.1, 0)
+    toggleBtn.Size = UDim2.new(0, 45, 0, 45)
+    toggleBtn.Position = UDim2.new(0, 10, 0, 10)
     toggleBtn.BackgroundColor3 = COLORS.MainBG
     toggleBtn.Text = "P"
     toggleBtn.TextColor3 = COLORS.BlueNeon
-    toggleBtn.Font = "GothamBold"
-    toggleBtn.TextSize = 25
+    toggleBtn.Font = Enum.Font.GothamBold
+    toggleBtn.TextSize = 22
     toggleBtn.Parent = sg
     Instance.new("UICorner", toggleBtn).CornerRadius = UDim.new(1, 0)
     Instance.new("UIStroke", toggleBtn).Color = COLORS.BlueNeon
@@ -81,65 +90,46 @@ local function AbrirHubUniversal()
         mainHub.Visible = not mainHub.Visible
     end)
 
-    -- FUNÇÃO PARA CRIAR BOTÕES DE FUNÇÃO
-    local function AddFunction(name, color, callback)
+    -- Função Auxiliar para adicionar botões
+    local function AddFunc(name, color, callback)
         local btn = Instance.new("TextButton")
-        btn.Size = UDim2.new(0, 130, 0, 35)
-        btn.BackgroundColor3 = Color3.fromRGB(30, 30, 40)
+        btn.BackgroundColor3 = COLORS.Glass
         btn.Text = name
         btn.TextColor3 = color
-        btn.Font = "GothamMedium"
-        btn.TextSize = 13
-        btn.Parent = sidebar
+        btn.Font = Enum.Font.GothamMedium
+        btn.TextSize = 14
+        btn.Parent = scroll
         Instance.new("UICorner", btn)
-        
+        local s = Instance.new("UIStroke", btn)
+        s.Color = COLORS.Border
         btn.MouseButton1Click:Connect(callback)
     end
 
-    -- [ NOVAS FUNÇÕES ADICIONADAS AQUI ] --
-
-    AddFunction("Speed (x100)", COLORS.BlueNeon, function()
-        player.Character.Humanoid.WalkSpeed = 100
-    end)
-
-    AddFunction("Infinite Jump", COLORS.GreenNeon, function()
-        UserInputService.JumpRequest:Connect(function()
-            player.Character:FindFirstChildOfClass("Humanoid"):ChangeState("Jumping")
-        end)
-    end)
-
-    AddFunction("Fly (E to Toggle)", COLORS.GoldNeon, function()
-        -- Lógica de Voo simples pode ser adicionada aqui
-        print("Fly Ativado")
-    end)
-
-    AddFunction("ESP Players", COLORS.PurpleNeon, function()
-        for _, v in pairs(Players:GetPlayers()) do
-            if v ~= player and v.Character and v.Character:FindFirstChild("HumanoidRootPart") then
-                local highlight = Instance.new("Highlight")
-                highlight.Parent = v.Character
-                highlight.FillColor = COLORS.PurpleNeon
+    -- LISTA DE FUNÇÕES (Agora visíveis no Grid)
+    AddFunc("Speed x100", COLORS.BlueNeon, function() player.Character.Humanoid.WalkSpeed = 100 end)
+    AddFunc("Jump x150", COLORS.GreenNeon, function() player.Character.Humanoid.JumpPower = 150 end)
+    AddFunc("ESP Players", COLORS.PurpleNeon, function() 
+        for _, p in pairs(Players:GetPlayers()) do
+            if p ~= player and p.Character then
+                local h = Instance.new("Highlight", p.Character)
+                h.FillColor = COLORS.PurpleNeon
             end
         end
     end)
-
-    AddFunction("Anti-AFK", COLORS.GreenNeon, function()
-        local virtualUser = game:GetService("VirtualUser")
-        player.Idled:Connect(function()
-            virtualUser:CaptureController()
-            virtualUser:ClickButton2(Vector2.new())
-        end)
-    end)
-
-    AddFunction("Full Bright", COLORS.GoldNeon, function()
+    AddFunc("Full Bright", COLORS.GoldNeon, function() 
         game:GetService("Lighting").Brightness = 2
         game:GetService("Lighting").ClockTime = 14
-        game:GetService("Lighting").GlobalShadows = false
     end)
+    AddFunc("Anti-AFK", COLORS.GreenNeon, function() 
+        player.Idled:Connect(function() 
+            game:GetService("VirtualUser"):Button2Down(Vector2.new(0,0), workspace.CurrentCamera.CFrame)
+        end)
+    end)
+    AddFunc("Fly (Em breve)", COLORS.GoldNeon, function() print("Fly em desenvolvimento") end)
 end
 
 -----------------------------------------------------------
--- 2. PARTE: TELA DE LOGIN (INTOCADA CONFORME PEDIDO)
+-- 2. PARTE: TELA DE LOGIN (INTOCADA - IGUAL À SUA)
 -----------------------------------------------------------
 local loginFrame = Instance.new("Frame")
 loginFrame.Size = UDim2.new(0, 650, 0, 380)
@@ -220,7 +210,7 @@ check.MouseButton1Click:Connect(function()
         status.Text = "✅ Autorizado!"
         task.wait(0.5)
         loginFrame:Destroy()
-        AbrirHubUniversal() -- Inicia a GUI com as novas funções
+        AbrirHubUniversal() -- Isso cria a nova interface profissional
     else
         status.Text = "❌ Chave Errada!"
         input.Text = ""
