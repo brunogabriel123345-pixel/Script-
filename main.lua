@@ -6,6 +6,7 @@ local UserInputService = game:GetService("UserInputService")
 
 -- CONFIGURAÇÕES
 local KEY_CORRETA = "key-htpjvg"
+local LINK_GET_KEY = "Https://link-hub.net/3920699/Bb9WkaqTBZsg"
 local LINK_GAMEPASS = "https://www.roblox.com/pt/game-pass/1731556830/Key-primion-scripy-killer"
 
 -- PALETA DE CORES PREMIUM V2.0
@@ -74,7 +75,7 @@ local function CriarBotaoGalaxia(mainFrame)
 end
 
 -----------------------------------------------------------
--- 2. FUNÇÃO: HUB PRINCIPAL (A PARTE GUI)
+-- 2. FUNÇÃO: HUB PRINCIPAL (GUI)
 -----------------------------------------------------------
 local function AbrirHubPrincipal()
     local mainHub = Instance.new("Frame")
@@ -86,7 +87,6 @@ local function AbrirHubPrincipal()
     Instance.new("UICorner", mainHub).CornerRadius = UDim.new(0, 12)
     Instance.new("UIStroke", mainHub).Color = COLORS.BlueNeon
 
-    -- Sidebar lateral
     local side = Instance.new("Frame")
     side.Size = UDim2.new(0, 150, 1, 0)
     side.BackgroundColor3 = COLORS.Glass
@@ -97,7 +97,6 @@ local function AbrirHubPrincipal()
     layout.HorizontalAlignment = "Center"
     layout.Padding = UDim.new(0, 5)
 
-    -- Container de Páginas
     local container = Instance.new("Frame")
     container.Size = UDim2.new(1, -160, 1, -20)
     container.Position = UDim2.new(0, 155, 0, 10)
@@ -116,7 +115,6 @@ local function AbrirHubPrincipal()
         Instance.new("UIListLayout", p).Padding = UDim.new(0, 10)
         pages[name] = p
         
-        -- Botão da Aba
         local b = Instance.new("TextButton")
         b.Size = UDim2.new(0.9, 0, 0, 40)
         b.Text = name
@@ -146,45 +144,33 @@ local function AbrirHubPrincipal()
         btn.MouseButton1Click:Connect(callback)
     end
 
-    -- Criar Páginas e Funções
     local pPlayer = NewPage("Player")
     AddFunction(pPlayer, "Velocidade (50)", function() player.Character.Humanoid.WalkSpeed = 50 end)
     AddFunction(pPlayer, "Pulo (120)", function() player.Character.Humanoid.JumpPower = 120 end)
-    AddFunction(pPlayer, "Resetar Stats", function() player.Character.Humanoid.WalkSpeed = 16 player.Character.Humanoid.JumpPower = 50 end)
 
-    local pESP = NewPage("Visuals/ESP")
+    local pESP = NewPage("Visuals")
     AddFunction(pESP, "Highlight Players", function()
         for _, p in pairs(Players:GetPlayers()) do
             if p ~= player and p.Character then
-                local h = Instance.new("Highlight", p.Character)
-                h.FillColor = COLORS.GreenNeon
+                Instance.new("Highlight", p.Character).FillColor = COLORS.GreenNeon
             end
         end
     end)
 
-    local pFPS = NewPage("FPS/Config")
-    AddFunction(pFPS, "Remover Texturas (Lag Fix)", function()
-        for _, v in pairs(game:GetDescendants()) do
-            if v:IsA("Texture") or v:IsA("Decal") then v:Destroy() end
-        end
-    end)
-
     pages["Player"].Visible = true
-    CriarBotaoGalaxia(mainHub) -- Ativa o toggle quadrado galáxia
+    CriarBotaoGalaxia(mainHub)
 end
 
 -----------------------------------------------------------
--- 3. TELA DE LOGIN V2.0 (FIEL À SEGUNDA IMAGEM)
+-- 3. TELA DE LOGIN V2.0 (COM O SEU LINK ATUALIZADO)
 -----------------------------------------------------------
 local loginFrame = Instance.new("Frame")
 loginFrame.Size = UDim2.new(0, 650, 0, 380)
 loginFrame.Position = UDim2.new(0.5, -325, 0.5, -190)
 loginFrame.BackgroundColor3 = COLORS.MainBG
 loginFrame.Parent = sg
-Instance.new("UICorner", loginFrame).CornerRadius = UDim.new(0, 15)
-local lStroke = Instance.new("UIStroke", loginFrame)
-lStroke.Thickness = 1.5
-lStroke.Color = COLORS.Border
+Instance.new("UICorner", loginFrame)
+Instance.new("UIStroke", loginFrame).Color = COLORS.Border
 
 -- Títulos
 local t1 = Instance.new("TextLabel")
@@ -192,7 +178,7 @@ t1.Size = UDim2.new(1, 0, 0, 40)
 t1.Position = UDim2.new(0, 0, 0, 15)
 t1.Text = "PRIMION EXECUTOR"
 t1.TextColor3 = COLORS.GoldNeon
-t1.Font = Enum.Font.GothamBold
+t1.Font = "GothamBold"
 t1.TextSize = 26
 t1.BackgroundTransparency = 1
 t1.Parent = loginFrame
@@ -202,71 +188,48 @@ t2.Size = UDim2.new(1, 0, 0, 20)
 t2.Position = UDim2.new(0, 0, 0, 45)
 t2.Text = "KEY AUTHORIZATION"
 t2.TextColor3 = COLORS.BlueNeon
-t2.Font = Enum.Font.GothamBold
+t2.Font = "GothamBold"
 t2.TextSize = 16
 t2.BackgroundTransparency = 1
 t2.Parent = loginFrame
 
--- Ícone de Chave Central
-local ic = Instance.new("Frame")
-ic.Size = UDim2.new(0, 70, 0, 70)
-ic.Position = UDim2.new(0.5, -35, 0, 80)
-ic.BackgroundColor3 = COLORS.Glass
-ic.Parent = loginFrame
-Instance.new("UICorner", ic).CornerRadius = UDim.new(1, 0)
-Instance.new("UIStroke", ic).Color = COLORS.BlueNeon
-
-local il = Instance.new("TextLabel")
-il.Size = UDim2.new(1, 0, 1, 0)
-il.Text = "🔑"
-il.TextSize = 35
-il.BackgroundTransparency = 1
-il.Parent = ic
-
--- Painel Lateral Esquerdo (Botões com Ícones)
+-- Painel Lateral Esquerdo
 local lp = Instance.new("Frame")
 lp.Size = UDim2.new(0, 240, 0, 180)
 lp.Position = UDim2.new(0, 30, 0, 160)
 lp.BackgroundTransparency = 1
 lp.Parent = loginFrame
 
-local function CreateLoginBtn(name, sub, color, icon, pos)
+local function CreateLoginBtn(name, color, icon, pos)
     local b = Instance.new("TextButton")
     b.Size = UDim2.new(1, 0, 0, 55)
     b.Position = pos
     b.BackgroundColor3 = COLORS.Glass
-    b.Text = ""
+    b.Text = "          " .. name
+    b.TextColor3 = Color3.new(1,1,1)
+    b.Font = "GothamBold"
+    b.TextXAlignment = "Left"
     b.Parent = lp
     Instance.new("UICorner", b).CornerRadius = UDim.new(0, 10)
     Instance.new("UIStroke", b).Color = color
 
-    local iconLabel = Instance.new("TextLabel")
-    iconLabel.Size = UDim2.new(0, 35, 0, 35)
-    iconLabel.Position = UDim2.new(0, 10, 0.5, -17)
-    iconLabel.BackgroundColor3 = color
-    iconLabel.Text = icon
-    iconLabel.TextColor3 = Color3.new(1,1,1)
-    iconLabel.Parent = b
-    Instance.new("UICorner", iconLabel)
-
-    local txt = Instance.new("TextLabel")
-    txt.Size = UDim2.new(1, -60, 0, 20)
-    txt.Position = UDim2.new(0, 55, 0.2, 0)
-    txt.Text = name
-    txt.TextColor3 = Color3.new(1,1,1)
-    txt.Font = "GothamBold"
-    txt.TextXAlignment = "Left"
-    txt.BackgroundTransparency = 1
-    txt.Parent = b
+    local il = Instance.new("TextLabel")
+    il.Size = UDim2.new(0, 35, 0, 35)
+    il.Position = UDim2.new(0, 10, 0.5, -17)
+    il.BackgroundColor3 = color
+    il.Text = icon
+    il.TextColor3 = Color3.new(1,1,1)
+    il.Parent = b
+    Instance.new("UICorner", il)
 
     return b
 end
 
-CreateLoginBtn("GET KEY", "Free access", COLORS.GreenNeon, "📥", UDim2.new(0,0,0,0))
-CreateLoginBtn("KEY PRIMION", "Premium", COLORS.GoldNeon, "⭐", UDim2.new(0,0,0,65))
-CreateLoginBtn("SUPPORT", "Discord", COLORS.PurpleNeon, "💬", UDim2.new(0,0,0,130))
+local btnGet = CreateLoginBtn("GET KEY", COLORS.GreenNeon, "📥", UDim2.new(0,0,0,0))
+local btnPremium = CreateLoginBtn("KEY PRIMION", COLORS.GoldNeon, "⭐", UDim2.new(0,0,0,65))
+local btnSupport = CreateLoginBtn("SUPPORT", COLORS.PurpleNeon, "💬", UDim2.new(0,0,0,130))
 
--- Painel Direito (Input e Check)
+-- Painel Direito
 local rp = Instance.new("Frame")
 rp.Size = UDim2.new(0, 330, 0, 180)
 rp.Position = UDim2.new(0, 290, 0, 160)
@@ -280,8 +243,7 @@ input.PlaceholderText = "Insira a chave..."
 input.Text = ""
 input.TextColor3 = Color3.new(1,1,1)
 input.Parent = rp
-Instance.new("UICorner", input).CornerRadius = UDim.new(0, 10)
-Instance.new("UIStroke", input).Color = COLORS.Border
+Instance.new("UICorner", input)
 
 local check = Instance.new("TextButton")
 check.Size = UDim2.new(1, 0, 0, 60)
@@ -299,9 +261,22 @@ local status = Instance.new("TextLabel")
 status.Size = UDim2.new(1, 0, 0, 30)
 status.Position = UDim2.new(0, 0, 0, 140)
 status.BackgroundTransparency = 1
-status.Text = "Aguardando..."
+status.Text = "Aguardando chave..."
 status.TextColor3 = Color3.fromRGB(150, 150, 150)
 status.Parent = rp
+
+-- LÓGICA DOS BOTÕES
+btnGet.MouseButton1Click:Connect(function()
+    setclipboard(LINK_GET_KEY)
+    status.Text = "✅ Link de Key copiado!"
+    status.TextColor3 = COLORS.GreenNeon
+end)
+
+btnPremium.MouseButton1Click:Connect(function()
+    setclipboard(LINK_GAMEPASS)
+    status.Text = "⭐ Link Premium copiado!"
+    status.TextColor3 = COLORS.GoldNeon
+end)
 
 check.MouseButton1Click:Connect(function()
     if input.Text:gsub("%s+", "") == KEY_CORRETA then
