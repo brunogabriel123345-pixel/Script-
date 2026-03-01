@@ -2,19 +2,19 @@ local Players = game:GetService("Players")
 local player = Players.LocalPlayer
 local playerGui = player:WaitForChild("PlayerGui")
 local UserInputService = game:GetService("UserInputService")
+local RunService = game:GetService("RunService")
 
 -- CONFIGURAÇÕES
 local KEY_CORRETA = "key-htpjvg"
 local LINK_GAMEPASS = "https://www.roblox.com/pt/game-pass/1731556830/Key-primion-scripy-killer"
 
--- CORES
+-- CORES (Mantendo seu padrão)
 local COLORS = {
     BG = Color3.fromRGB(15, 17, 22),
     Sidebar = Color3.fromRGB(20, 22, 28),
     Accent = Color3.fromRGB(0, 255, 127),
     Gold = Color3.fromRGB(255, 200, 50),
-    Black = Color3.fromRGB(0, 0, 0),
-    White = Color3.new(1, 1, 1)
+    Black = Color3.fromRGB(0, 0, 0)
 }
 
 -- LIMPEZA
@@ -24,25 +24,6 @@ sg.Name = "PrimionV4_Final"
 sg.IgnoreGuiInset = true
 sg.ResetOnSpawn = false
 sg.Parent = playerGui
-
------------------------------------------------------------
--- 🌌 BOTÃO TOGGLE (ESTRELINHAS)
------------------------------------------------------------
-local toggleBtn = Instance.new("TextButton")
-toggleBtn.Size = UDim2.new(0, 45, 0, 45)
-toggleBtn.Position = UDim2.new(0, 10, 0.5, -22)
-toggleBtn.BackgroundColor3 = COLORS.Black
-toggleBtn.Text = "✨\n. * . "
-toggleBtn.TextColor3 = COLORS.White
-toggleBtn.Font = Enum.Font.GothamBold
-toggleBtn.TextSize = 10
-toggleBtn.Visible = false
-toggleBtn.Parent = sg
-
-Instance.new("UICorner", toggleBtn).CornerRadius = UDim.new(0, 8)
-local tStroke = Instance.new("UIStroke", toggleBtn)
-tStroke.Color = Color3.fromRGB(60, 60, 60)
-tStroke.Thickness = 2
 
 -----------------------------------------------------------
 -- 🎮 PAINEL PRINCIPAL
@@ -90,126 +71,106 @@ local function CreatePage(name)
     p.Visible = false
     p.BackgroundTransparency = 1
     p.ScrollBarThickness = 2
-    p.CanvasSize = UDim2.new(0,0,1.5,0)
+    p.CanvasSize = UDim2.new(0, 0, 1.5, 0)
     p.Parent = contentArea
-    Instance.new("UIListLayout", p).Padding = UDim.new(0, 8)
+    local layout = Instance.new("UIListLayout", p)
+    layout.Padding = UDim.new(0, 8)
+    layout.HorizontalAlignment = Enum.HorizontalAlignment.Center
     pages[name] = p
     return p
 end
 
--- Criar as Abas e Botões Laterais
+-- Criar as 5 Abas
 local tabs = {"Menu", "ESP", "FPS Killer", "Player", "Configuração"}
 for _, name in pairs(tabs) do
-    local p = CreatePage(name)
+    CreatePage(name)
     local b = Instance.new("TextButton")
     b.Size = UDim2.new(0.9, 0, 0, 35)
     b.BackgroundColor3 = Color3.fromRGB(35, 37, 45)
     b.Text = name
-    b.TextColor3 = COLORS.White
+    b.TextColor3 = Color3.new(1,1,1)
     b.Font = Enum.Font.GothamMedium
     b.Parent = sidebar
     Instance.new("UICorner", b)
     
     b.MouseButton1Click:Connect(function()
         for _, pg in pairs(pages) do pg.Visible = false end
-        p.Visible = true
+        pages[name].Visible = true
     end)
 end
 pages["Menu"].Visible = true
 
--- Funções Básicas para as Abas (Exemplos)
-local function AddTool(page, text, callback)
-    local btn = Instance.new("TextButton")
-    btn.Size = UDim2.new(0.95, 0, 0, 40)
-    btn.BackgroundColor3 = Color3.fromRGB(40, 44, 52)
-    btn.Text = text
-    btn.TextColor3 = COLORS.White
-    btn.Font = Enum.Font.GothamSemibold
-    btn.Parent = pages[page]
-    Instance.new("UICorner", btn)
-    btn.MouseButton1Click:Connect(callback)
+-----------------------------------------------------------
+-- 🚀 FUNÇÕES ESPECÍFICAS (MENU E ESP)
+-----------------------------------------------------------
+
+-- Função Auxiliar para Labels
+local function AddLabel(page, text, color)
+    local l = Instance.new("TextLabel")
+    l.Size = UDim2.new(0.9, 0, 0, 30)
+    l.BackgroundTransparency = 1
+    l.Text = text
+    l.TextColor3 = color or Color3.new(1,1,1)
+    l.Font = Enum.Font.GothamSemibold
+    l.TextSize = 14
+    l.TextXAlignment = Enum.TextXAlignment.Left
+    l.Parent = pages[page]
+    return l
 end
 
-AddTool("Player", "Velocidade (Speed 50)", function() player.Character.Humanoid.WalkSpeed = 50 end)
-AddTool("Player", "Pulo Alto (JP 100)", function() player.Character.Humanoid.JumpPower = 100 end)
-AddTool("FPS Killer", "Boost FPS (Remover Texturas)", function() 
-    for _, v in pairs(game:GetDescendants()) do 
-        if v:IsA("Texture") or v:IsA("Decal") then v:Destroy() end 
-    end 
-end)
+-- 1. MENU (DADOS DO PLAYER)
+AddLabel("Menu", "✨ DADOS DO USUÁRIO", COLORS.Gold)
+AddLabel("Menu", "👤 Nick: " .. player.Name)
+AddLabel("Menu", "🆔 ID: " .. player.UserId)
+AddLabel("Menu", "⏳ Idade da Conta: " .. player.AccountAge .. " dias")
 
--- Lógica do Toggle
-toggleBtn.MouseButton1Click:Connect(function()
-    mainHub.Visible = not mainHub.Visible
-end)
-
------------------------------------------------------------
--- 🔑 TELA DE LOGIN (ESTILO ORIGINAL RESTAURADO)
------------------------------------------------------------
-local loginFrame = Instance.new("Frame")
-loginFrame.Size = UDim2.new(0, 550, 0, 350)
-loginFrame.Position = UDim2.new(0.5, -275, 0.5, -175)
-loginFrame.BackgroundColor3 = COLORS.BG
-loginFrame.Parent = sg
-Instance.new("UICorner", loginFrame)
-
-local loginTitle = Instance.new("TextLabel")
-loginTitle.Size = UDim2.new(1,0,0,50)
-loginTitle.Text = "PRIMION KEY SYSTEM\n100 Robux - Lifetime Infinito"
-loginTitle.TextColor3 = COLORS.Gold
-loginTitle.Font = Enum.Font.GothamBold
-loginTitle.TextSize = 14
-loginTitle.Parent = loginFrame
-loginTitle.BackgroundTransparency = 1
-
-local input = Instance.new("TextBox")
-input.Size = UDim2.new(0.8, 0, 0, 45)
-input.Position = UDim2.new(0.1, 0, 0, 100)
-input.BackgroundColor3 = COLORS.Sidebar
-input.PlaceholderText = "Cole sua key aqui..."
-input.Text = ""
-input.TextColor3 = COLORS.White
-input.Parent = loginFrame
-Instance.new("UICorner", input)
-
-local btnGrid = Instance.new("Frame")
-btnGrid.Size = UDim2.new(0.8, 0, 0, 50)
-btnGrid.Position = UDim2.new(0.1, 0, 0, 160)
-btnGrid.BackgroundTransparency = 1
-btnGrid.Parent = loginFrame
-Instance.new("UIListLayout", btnGrid).FillDirection = Enum.FillDirection.Horizontal
-Instance.new("UIListLayout", btnGrid).Padding = UDim.new(0, 10)
-
-local function QuickBtn(name, color, callback)
-    local b = Instance.new("TextButton")
-    b.Size = UDim2.new(0.32, 0, 1, 0)
-    b.BackgroundColor3 = color
-    b.Text = name
-    b.TextColor3 = COLORS.White
-    b.Font = Enum.Font.GothamBold
-    b.Parent = btnGrid
-    Instance.new("UICorner", b)
-    b.MouseButton1Click:Connect(callback)
-end
-
--- Botões de Login Originais
-QuickBtn("GET KEY", Color3.fromRGB(255, 100, 0), function() 
-    setclipboard("https://seulinkdekey.com") -- Coloque seu link aqui
-end)
-
-QuickBtn("CHECK KEY", COLORS.Accent, function()
-    if input.Text == KEY_CORRETA then
-        loginFrame:Destroy()
-        mainHub.Visible = true
-        toggleBtn.Visible = true
-    else
-        input.Text = ""
-        input.PlaceholderText = "KEY INCORRETA!"
-        task.wait(1.5)
-        input.PlaceholderText = "Cole sua key aqui..."
+local timeLabel = AddLabel("Menu", "⏰ Tempo na Sessão: 0s")
+local startTime = os.time()
+task.spawn(function()
+    while task.wait(1) do
+        local seconds = os.time() - startTime
+        timeLabel.Text = "⏰ Tempo na Sessão: " .. seconds .. "s"
     end
 end)
 
-QuickBtn("PREMIUM", COLORS.Gold, function() 
-    setclipboard(LINK_GAMEPASS) 
-end)
+-- 2. ESP (BOX E NICK ON/OFF)
+local espActive = false
+local espBtn = Instance.new("TextButton")
+espBtn.Size = UDim2.new(0.9, 0, 0, 45)
+espBtn.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
+espBtn.Text = "ESP: OFF"
+espBtn.TextColor3 = Color3.fromRGB(255, 80, 80)
+espBtn.Font = Enum.Font.GothamBold
+espBtn.Parent = pages["ESP"]
+Instance.new("UICorner", espBtn)
+
+espBtn.MouseButton1Click:Connect(function()
+    espActive = not espActive
+    espBtn.Text = "ESP: " .. (espActive and "ON" or "OFF")
+    espBtn.TextColor3 = espActive and COLORS.Accent or Color3.fromRGB(255, 80, 80)
+    
+    -- Lógica simples de ESP (Box e Nick)
+    if espActive then
+        task.spawn(function()
+            while espActive do
+                for _, p in pairs(Players:GetPlayers()) do
+                    if p ~= player and p.Character and p.Character:FindFirstChild("HumanoidRootPart") then
+                        if not p.Character.HumanoidRootPart:FindFirstChild("PrimionESP") then
+                            local bg = Instance.new("BillboardGui", p.Character.HumanoidRootPart)
+                            bg.Name = "PrimionESP"
+                            bg.AlwaysOnTop = true
+                            bg.Size = UDim2.new(4, 0, 5, 0)
+                            
+                            local box = Instance.new("Frame", bg)
+                            box.Size = UDim2.new(1, 0, 1, 0)
+                            box.BackgroundTransparency = 0.6
+                            box.BackgroundColor3 = COLORS.Accent
+                            Instance.new("UIStroke", box).Color = Color3.new(1,1,1)
+                            
+                            local nameTag = Instance.new("TextLabel", bg)
+                            nameTag.Text = p.Name
+                            nameTag.Size = UDim2.new(1, 0, 0, 20)
+                            nameTag.Position = UDim2.new(0, 0, -0.3, 0)
+                            nameTag.BackgroundTransparency = 1
+                            nameTag.TextColor3 =
+                                    
