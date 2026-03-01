@@ -3,151 +3,225 @@ local player = Players.LocalPlayer
 local playerGui = player:WaitForChild("PlayerGui")
 local TweenService = game:GetService("TweenService")
 
--- CONFIGURAÇÕES (MANTIDAS)
+-- CONFIGURAÇÕES ORIGINAIS
 local LINK_DISCORD = "https://discord.gg/2rK2sRTf"
 local LINK_GAMEPASS = "https://www.roblox.com/pt/game-pass/1731556830/Key-primion-scripy-killer"
 local LINK_GET_KEY = "https://link-encurtador.com/exemplo" 
 local KEY_CORRETA = "key-htpjvg"
 
--- PALETA DE CORES "NIGHT MODE"
-local COLORS = {
-    Background = Color3.fromRGB(20, 20, 25),
-    Accent = Color3.fromRGB(0, 255, 150),
-    Gold = Color3.fromRGB(255, 200, 50),
-    Discord = Color3.fromRGB(88, 101, 242),
-    Text = Color3.fromRGB(255, 255, 255),
-    SecondaryText = Color3.fromRGB(180, 180, 180)
-}
+-- LIMPEZA
+if playerGui:FindFirstChild("PrimionFinalV2") then playerGui.PrimionFinalV2:Destroy() end
 
--- LIMPEZA DE GUI ANTIGA
-if playerGui:FindFirstChild("PrimionSimpleV3") then
-    playerGui.PrimionSimpleV3:Destroy()
-end
+local sg = Instance.new("ScreenGui")
+sg.Name = "PrimionFinalV2"
+sg.IgnoreGuiInset = true
+sg.Parent = playerGui
 
-local screen = Instance.new("ScreenGui")
-screen.Name = "PrimionSimpleV3"
-screen.IgnoreGuiInset = true
-screen.Parent = playerGui
-
--- Frame Principal (Centralizado)
+-- FUNDO ESCURO COM DESFOQUE (SIMULADO)
 local main = Instance.new("Frame")
-main.Size = UDim2.new(0, 400, 0, 450)
-main.Position = UDim2.new(0.5, -200, 0.5, -225)
-main.BackgroundColor3 = COLORS.Background
+main.Size = UDim2.new(0, 680, 0, 420)
+main.Position = UDim2.new(0.5, -340, 0.5, -210)
+main.BackgroundColor3 = Color3.fromRGB(10, 15, 20)
 main.BorderSizePixel = 0
-main.Parent = screen
+main.Parent = sg
 
-Instance.new("UICorner", main).CornerRadius = UDim.new(0, 15)
-local stroke = Instance.new("UIStroke", main)
-stroke.Color = COLORS.Accent
-stroke.Thickness = 1.5
-stroke.Transparency = 0.6
+local cornerMain = Instance.new("UICorner", main)
+cornerMain.CornerRadius = UDim.new(0, 20)
 
--- Título e Subtítulo
+local strokeMain = Instance.new("UIStroke", main)
+strokeMain.Thickness = 2
+strokeMain.Color = Color3.fromRGB(40, 50, 65)
+
+-- TÍTULO (Dourado e Azul como na foto)
 local title = Instance.new("TextLabel")
 title.Size = UDim2.new(1, 0, 0, 50)
-title.Position = UDim2.new(0, 0, 0, 20)
+title.Position = UDim2.new(0, 0, 0, -80)
 title.Text = "PRIMION EXECUTOR"
-title.TextColor3 = COLORS.Gold
+title.TextColor3 = Color3.fromRGB(255, 215, 100)
 title.Font = Enum.Font.GothamBold
-title.TextSize = 24
+title.TextSize = 32
 title.BackgroundTransparency = 1
 title.Parent = main
 
-local sub = Instance.new("TextLabel")
-sub.Size = UDim2.new(1, 0, 0, 20)
-sub.Position = UDim2.new(0, 0, 0, 55)
-sub.Text = "Sistema de Autenticação"
-sub.TextColor3 = COLORS.SecondaryText
-sub.Font = Enum.Font.GothamMedium
-sub.TextSize = 14
-sub.BackgroundTransparency = 1
-sub.Parent = main
+local subtitle = Instance.new("TextLabel")
+subtitle.Size = UDim2.new(1, 0, 0, 30)
+subtitle.Position = UDim2.new(0, 0, 0, -45)
+subtitle.Text = "KEY AUTHORIZATION"
+subtitle.TextColor3 = Color3.fromRGB(100, 180, 255)
+subtitle.Font = Enum.Font.GothamBold
+subtitle.TextSize = 28
+subtitle.BackgroundTransparency = 1
+subtitle.Parent = main
 
--- Função para Criar Botão com Efeito de Hover
-local function CreateModernBtn(name, pos, color, parent)
+-- ÍCONE CENTRAL (Círculo da Chave)
+local iconCircle = Instance.new("Frame")
+iconCircle.Size = UDim2.new(0, 90, 0, 90)
+iconCircle.Position = UDim2.new(0.5, -45, 0, -45)
+iconCircle.BackgroundColor3 = Color3.fromRGB(15, 20, 30)
+iconCircle.Parent = main
+Instance.new("UICorner", iconCircle).CornerRadius = UDim.new(1, 0)
+local iconStroke = Instance.new("UIStroke", iconCircle)
+iconStroke.Thickness = 3
+iconStroke.Color = Color3.fromRGB(0, 255, 150)
+
+local keyEmoji = Instance.new("TextLabel")
+keyEmoji.Size = UDim2.new(1, 0, 1, 0)
+keyEmoji.Text = "🗝️"
+keyEmoji.TextSize = 45
+keyEmoji.BackgroundTransparency = 1
+keyEmoji.Parent = iconCircle
+
+-----------------------------------------------------------
+-- COLUNA ESQUERDA (BOTÕES)
+-----------------------------------------------------------
+local function CreateButton(text, subtext, pos, color)
     local btn = Instance.new("TextButton")
-    btn.Size = UDim2.new(0.85, 0, 0, 45)
+    btn.Size = UDim2.new(0, 280, 0, 75)
     btn.Position = pos
-    btn.BackgroundColor3 = color
-    btn.Text = name
-    btn.Font = Enum.Font.GothamBold
-    btn.TextColor3 = Color3.new(1,1,1)
-    btn.TextSize = 14
-    btn.Parent = parent
-    Instance.new("UICorner", btn).CornerRadius = UDim.new(0, 8)
+    btn.BackgroundColor3 = Color3.fromRGB(25, 30, 40)
+    btn.Text = ""
+    btn.Parent = main
+    Instance.new("UICorner", btn).CornerRadius = UDim.new(0, 15)
+    
+    local s = Instance.new("UIStroke", btn)
+    s.Thickness = 2
+    s.Color = color
+    
+    local t1 = Instance.new("TextLabel")
+    t1.Size = UDim2.new(1, -20, 0.5, 0)
+    t1.Position = UDim2.new(0, 15, 0.15, 0)
+    t1.Text = text
+    t1.TextColor3 = color
+    t1.Font = Enum.Font.GothamBold
+    t1.TextSize = 20
+    t1.TextXAlignment = Enum.TextXAlignment.Left
+    t1.BackgroundTransparency = 1
+    t1.Parent = btn
 
-    -- Efeitos Visuais
-    btn.MouseEnter:Connect(function()
-        TweenService:Create(btn, TweenInfo.new(0.2), {BackgroundColor3 = color:Lerp(Color3.new(1,1,1), 0.2), Size = UDim2.new(0.88, 0, 0, 48)}):Play()
-    end)
-    btn.MouseLeave:Connect(function()
-        TweenService:Create(btn, TweenInfo.new(0.2), {BackgroundColor3 = color, Size = UDim2.new(0.85, 0, 0, 45)}):Play()
-    end)
+    local t2 = Instance.new("TextLabel")
+    t2.Size = UDim2.new(1, -20, 0.4, 0)
+    t2.Position = UDim2.new(0, 15, 0.55, 0)
+    t2.Text = subtext
+    t2.TextColor3 = Color3.fromRGB(180, 180, 180)
+    t2.Font = Enum.Font.Gotham
+    t2.TextSize = 14
+    t2.TextXAlignment = Enum.TextXAlignment.Left
+    t2.BackgroundTransparency = 1
+    t2.Parent = btn
     
     return btn
 end
 
--- Botões de Ação
-local btnGet = CreateModernBtn("OBTER CHAVE GRÁTIS", UDim2.new(0.075, 0, 0, 100), COLORS.Accent, main)
-local btnPrimion = CreateModernBtn("COMPRAR KEY LIFETIME", UDim2.new(0.075, 0, 0, 155), COLORS.Gold, main)
-local btnDiscord = CreateModernBtn("DISCORD SUPORTE", UDim2.new(0.075, 0, 0, 210), COLORS.Discord, main)
-
--- Input de Texto
-local inputKey = Instance.new("TextBox")
-inputKey.Size = UDim2.new(0.85, 0, 0, 50)
-inputKey.Position = UDim2.new(0.075, 0, 0, 280)
-inputKey.BackgroundColor3 = Color3.fromRGB(30, 30, 35)
-inputKey.PlaceholderText = "Cole sua Key aqui..."
-inputKey.Text = ""
-inputKey.TextColor3 = Color3.new(1,1,1)
-inputKey.Font = Enum.Font.Gotham
-inputKey.Parent = main
-Instance.new("UICorner", inputKey).CornerRadius = UDim.new(0, 8)
-Instance.new("UIStroke", inputKey).Color = Color3.fromRGB(60, 60, 70)
-
--- Botão de Verificação (Check)
-local btnCheck = CreateModernBtn("VERIFICAR ACESSO", UDim2.new(0.075, 0, 0, 345), Color3.fromRGB(40, 40, 45), main)
-btnCheck.TextColor3 = COLORS.Accent
-
--- Label de Feedback
-local feedback = Instance.new("TextLabel")
-feedback.Size = UDim2.new(1, 0, 0, 30)
-feedback.Position = UDim2.new(0, 0, 0, 400)
-feedback.BackgroundTransparency = 1
-feedback.Text = ""
-feedback.Font = Enum.Font.GothamMedium
-feedback.TextSize = 14
-feedback.Parent = main
+local btnGet = CreateButton("GET KEY", "Obtain free access", UDim2.new(0, 40, 0, 80), Color3.fromRGB(0, 255, 127))
+local btnPremium = CreateButton("KEY PRIMION", "Lifetime Access", UDim2.new(0, 40, 0, 180), Color3.fromRGB(255, 180, 50))
+local btnSupport = CreateButton("SUPPORTe", "Atendimento", UDim2.new(0, 40, 0, 280), Color3.fromRGB(150, 150, 255))
 
 -----------------------------------------------------------
--- LÓGICA
+-- COLUNA DIREITA (INPUT E CHECK)
 -----------------------------------------------------------
-local function AbrirPainel()
-    screen:Destroy()
-    print("Sucesso! O painel principal abriria aqui.")
-    -- Aqui você chamaria a sua função AbrirPainelPrincipal() original
+-- Barra de Progresso
+local barBg = Instance.new("Frame")
+barBg.Size = UDim2.new(0, 280, 0, 10)
+barBg.Position = UDim2.new(0, 360, 0, 80)
+barBg.BackgroundColor3 = Color3.fromRGB(30, 35, 45)
+barBg.Parent = main
+Instance.new("UICorner", barBg)
+
+local barFill = Instance.new("Frame")
+barFill.Size = UDim2.new(0.7, 0, 1, 0)
+barFill.BackgroundColor3 = Color3.fromRGB(100, 150, 255)
+barFill.Parent = barBg
+Instance.new("UICorner", barFill)
+
+-- TextBox
+local input = Instance.new("TextBox")
+input.Size = UDim2.new(0, 280, 0, 75)
+input.Position = UDim2.new(0, 360, 0, 115)
+input.BackgroundColor3 = Color3.fromRGB(20, 25, 35)
+input.Text = ""
+input.PlaceholderText = "Cole a sua chave aqui... I"
+input.TextColor3 = Color3.new(1,1,1)
+input.Font = Enum.Font.Gotham
+input.TextSize = 16
+input.Parent = main
+Instance.new("UICorner", input).CornerRadius = UDim.new(0, 15)
+Instance.new("UIStroke", input).Color = Color3.fromRGB(60, 70, 85)
+
+-- Botão CHECK
+local btnCheck = Instance.new("TextButton")
+btnCheck.Size = UDim2.new(0, 280, 0, 75)
+btnCheck.Position = UDim2.new(0, 360, 0, 215)
+btnCheck.BackgroundColor3 = Color3.fromRGB(30, 50, 40)
+btnCheck.Text = "CHECK KEY"
+btnCheck.TextColor3 = Color3.fromRGB(0, 255, 127)
+btnCheck.Font = Enum.Font.GothamBold
+btnCheck.TextSize = 22
+btnCheck.Parent = main
+Instance.new("UICorner", btnCheck).CornerRadius = UDim.new(0, 15)
+local sCheck = Instance.new("UIStroke", btnCheck)
+sCheck.Thickness = 3
+sCheck.Color = Color3.fromRGB(0, 255, 127)
+
+-- Feedback Labels
+local feedbackValid = Instance.new("TextLabel")
+feedbackValid.Size = UDim2.new(0, 280, 0, 30)
+feedbackValid.Position = UDim2.new(0, 360, 0, 305)
+feedbackValid.Text = "✅ Key Válida! Autorizando..."
+feedbackValid.TextColor3 = Color3.fromRGB(0, 255, 127)
+feedbackValid.BackgroundTransparency = 1
+feedbackValid.Font = Enum.Font.GothamBold
+feedbackValid.TextSize = 16
+feedbackValid.Visible = false
+feedbackValid.Parent = main
+
+local feedbackInvalid = Instance.new("TextLabel")
+feedbackInvalid.Size = UDim2.new(0, 280, 0, 30)
+feedbackInvalid.Position = UDim2.new(0, 360, 0, 340)
+feedbackInvalid.Text = "❌ Key Incorreta!"
+feedbackInvalid.TextColor3 = Color3.fromRGB(255, 80, 80)
+feedbackInvalid.BackgroundTransparency = 1
+feedbackInvalid.Font = Enum.Font.GothamBold
+feedbackInvalid.TextSize = 16
+feedbackInvalid.Visible = false
+feedbackInvalid.Parent = main
+
+-- Rodapé
+local footer = Instance.new("TextLabel")
+footer.Size = UDim2.new(1, 0, 0, 30)
+footer.Position = UDim2.new(0, 0, 1, 10)
+footer.Text = "PRIMION KEY SYSTEM V2.0"
+footer.TextColor3 = Color3.fromRGB(120, 130, 145)
+footer.Font = Enum.Font.GothamBold
+footer.TextSize = 16
+footer.BackgroundTransparency = 1
+footer.Parent = main
+
+-----------------------------------------------------------
+-- LÓGICA FINAL
+-----------------------------------------------------------
+local function Autorizar()
+    feedbackValid.Visible = true
+    task.wait(1.5)
+    sg:Destroy()
+    print("Acesso Liberado!") -- Aqui você coloca o código do seu painel principal
 end
 
 btnCheck.MouseButton1Click:Connect(function()
-    if inputKey.Text == KEY_CORRETA then
-        feedback.TextColor3 = COLORS.Accent
-        feedback.Text = "Acesso Permitido! Carregando..."
-        task.wait(1)
-        AbrirPainel()
+    feedbackInvalid.Visible = false
+    if input.Text == KEY_CORRETA then
+        Autorizar()
     else
-        feedback.TextColor3 = Color3.fromRGB(255, 100, 100)
-        feedback.Text = "Chave Inválida. Tente novamente."
-        -- Efeito de Erro (Shake)
-        local originalPos = main.Position
-        for i = 1, 6 do
-            main.Position = originalPos + UDim2.new(0, math.random(-5, 5), 0, 0)
-            task.wait(0.05)
+        feedbackInvalid.Visible = true
+        -- Efeito de shake
+        local op = main.Position
+        for i = 1, 8 do
+            main.Position = op + UDim2.new(0, math.random(-5,5), 0, 0)
+            task.wait(0.04)
         end
-        main.Position = originalPos
+        main.Position = op
     end
 end)
 
-btnGet.MouseButton1Click:Connect(function() setclipboard(LINK_GET_KEY) feedback.Text = "Link da Key Copiado!" end)
-btnPrimion.MouseButton1Click:Connect(function() setclipboard(LINK_GAMEPASS) feedback.Text = "Link Gamepass Copiado!" end)
-btnDiscord.MouseButton1Click:Connect(function() setclipboard(LINK_DISCORD) feedback.Text = "Link Discord Copiado!" end)
+btnGet.MouseButton1Click:Connect(function() setclipboard(LINK_GET_KEY) end)
+btnPremium.MouseButton1Click:Connect(function() setclipboard(LINK_GAMEPASS) end)
+btnSupport.MouseButton1Click:Connect(function() setclipboard(LINK_DISCORD) end)
