@@ -29,7 +29,7 @@ sg.ResetOnSpawn = false
 sg.Parent = playerGui
 
 -----------------------------------------------------------
--- 1. PARTE: GUI UNIVERSAL (COM SUPER BOOST FPS E FLY)
+-- 1. PARTE: GUI UNIVERSAL (LAYOUT MANTIDO + NOVAS FUNÇÕES)
 -----------------------------------------------------------
 local function AbrirHubUniversal()
     local mainHub = Instance.new("Frame")
@@ -114,39 +114,8 @@ local function AbrirHubUniversal()
     end
 
     -----------------------------------------------------------
-    -- FUNÇÕES DO HUB
+    -- FUNÇÕES ADICIONADAS/ATUALIZADAS
     -----------------------------------------------------------
-
-    -- SUPER BOOST FPS (AGRESSIVO)
-    AddToggle("Super Boost FPS", COLORS.BlueNeon, function(on)
-        if on then
-            -- Remove efeitos de iluminação
-            local l = game:GetService("Lighting")
-            l.GlobalShadows = false
-            for _, v in pairs(l:GetChildren()) do
-                if v:IsA("PostEffect") or v:IsA("BloomEffect") or v:IsA("BlurEffect") then
-                    v.Enabled = false
-                end
-            end
-
-            -- Função de limpeza de texturas e partículas
-            local function Optimize(v)
-                if v:IsA("BasePart") then
-                    v.Material = Enum.Material.SmoothPlastic
-                    v.Reflectance = 0
-                elseif v:IsA("Decal") or v:IsA("Texture") then
-                    v.Transparency = 1
-                elseif v:IsA("ParticleEmitter") or v:IsA("Trail") or v:IsA("Fire") or v:IsA("Sparkles") then
-                    v.Enabled = false
-                elseif v:IsA("SpecialMesh") then
-                    v.TextureId = ""
-                end
-            end
-
-            for _, v in pairs(game:GetDescendants()) do Optimize(v) end
-            settings().Rendering.QualityLevel = 1
-        end
-    end)
 
     -- FLY SYSTEM
     local flying = false
@@ -155,10 +124,13 @@ local function AbrirHubUniversal()
         flying = on
         local char = player.Character or player.CharacterAdded:Wait()
         local hrp = char:WaitForChild("HumanoidRootPart")
+        
         if flying then
             local bv = Instance.new("BodyVelocity", hrp)
             bv.Name = "FlyBV"
             bv.MaxForce = Vector3.new(math.huge, math.huge, math.huge)
+            bv.Velocity = Vector3.new(0,0,0)
+            
             task.spawn(function()
                 while flying do
                     local cam = workspace.CurrentCamera.CFrame
@@ -172,6 +144,22 @@ local function AbrirHubUniversal()
                 end
                 bv:Destroy()
             end)
+        end
+    end)
+
+    -- BOOST FPS (REMOVE TEXTURAS)
+    AddToggle("Boost FPS", COLORS.BlueNeon, function(on)
+        if on then
+            for _, v in pairs(game:GetDescendants()) do
+                if v:IsA("BasePart") then
+                    v.Material = Enum.Material.SmoothPlastic
+                elseif v:IsA("Decal") or v:IsA("Texture") then
+                    v:Destroy()
+                elseif v:IsA("SpecialMesh") then
+                    v.TextureId = ""
+                end
+            end
+            settings().Rendering.QualityLevel = 1
         end
     end)
 
@@ -209,7 +197,7 @@ local function AbrirHubUniversal()
 end
 
 -----------------------------------------------------------
--- 2. PARTE: TELA DE LOGIN (MANTIDA IGUAL)
+-- 2. PARTE: TELA DE LOGIN (INTOCADA)
 -----------------------------------------------------------
 local loginFrame = Instance.new("Frame")
 loginFrame.Size = UDim2.new(0, 650, 0, 380)
