@@ -8,7 +8,7 @@ local UserInputService = game:GetService("UserInputService")
 local KEY_CORRETA = "key-htpjvg"
 local LINK_GET_KEY = "Https://link-hub.net/3920699/Bb9WkaqTBZsg"
 local LINK_GAMEPASS = "https://www.roblox.com/pt/game-pass/1731556830/Key-primion-scripy-killer"
-local LINK_DISCORD = "https://discord.gg/2rK2sRTf" -- Link do suporte
+local LINK_DISCORD = "https://discord.gg/2rK2sRTf" -- NOVO LINK ATUALIZADO
 
 -- PALETA DE CORES PREMIUM V2.0
 local COLORS = {
@@ -93,7 +93,7 @@ local function CreateLoginBtn(name, color, icon, pos)
     il.Parent = b
     Instance.new("UICorner", il)
 
-    -- Nome (Posicionado à direita do ícone)
+    -- Nome (Posicionado com folga à direita do ícone para não cobrir)
     local tl = Instance.new("TextLabel")
     tl.Size = UDim2.new(1, -80, 1, 0)
     tl.Position = UDim2.new(0, 75, 0, 0) 
@@ -123,7 +123,7 @@ local input = Instance.new("TextBox")
 input.Size = UDim2.new(1, 0, 0, 50)
 input.BackgroundColor3 = COLORS.Glass
 input.PlaceholderText = "Cole a sua chave aqui..."
-input.Text = "" -- Original sem nada
+input.Text = "" -- Original sem nada, conforme solicitado
 input.TextColor3 = COLORS.Text
 input.Font = Enum.Font.Gotham
 input.TextSize = 15
@@ -159,11 +159,13 @@ end)
 btnPremium.MouseButton1Click:Connect(function()
     setclipboard(LINK_GAMEPASS)
     status.Text = "⭐ Link Premium copiado!"
+    status.TextColor3 = COLORS.GoldNeon
 end)
 
 btnSupport.MouseButton1Click:Connect(function()
     setclipboard(LINK_DISCORD)
-    status.Text = "💬 Link do Discord copiado!"
+    status.Text = "💬 Convite do Discord copiado!"
+    status.TextColor3 = COLORS.PurpleNeon
 end)
 
 check.MouseButton1Click:Connect(function()
