@@ -20,6 +20,7 @@ local COLORS = {
     Text = Color3.new(1, 1, 1)
 }
 
+-- LIMPEZA
 if playerGui:FindFirstChild("PrimionV4") then playerGui.PrimionV4:Destroy() end
 local sg = Instance.new("ScreenGui")
 sg.Name = "PrimionV4"
@@ -27,23 +28,41 @@ sg.ResetOnSpawn = false
 sg.Parent = playerGui
 
 -----------------------------------------------------------
--- FUNÇÃO: HUB PRINCIPAL (GUI)
+-- 1. FUNÇÃO: HUB PRINCIPAL (GUI)
 -----------------------------------------------------------
 local function AbrirHubPrincipal()
     local mainHub = Instance.new("Frame")
+    mainHub.Name = "MainHub"
     mainHub.Size = UDim2.new(0, 600, 0, 380)
     mainHub.Position = UDim2.new(0.5, -300, 0.5, -190)
     mainHub.BackgroundColor3 = COLORS.MainBG
     mainHub.Parent = sg
+    mainHub.Visible = true
     Instance.new("UICorner", mainHub)
     Instance.new("UIStroke", mainHub).Color = COLORS.BlueNeon
 
-    -- [Aqui você pode colocar as funções que já criamos antes]
-    print("Hub Primion Ativado")
+    -- Botão Galáxia (Toggle) incorporado para abrir/fechar
+    local tBtn = Instance.new("TextButton")
+    tBtn.Size = UDim2.new(0, 50, 0, 50)
+    tBtn.Position = UDim2.new(0, 10, 0, 10)
+    tBtn.Text = "★"
+    tBtn.Parent = sg
+    Instance.new("UICorner", tBtn)
+    
+    tBtn.MouseButton1Click:Connect(function()
+        mainHub.Visible = not mainHub.Visible
+    end)
+
+    local title = Instance.new("TextLabel")
+    title.Size = UDim2.new(1, 0, 0, 50)
+    title.Text = "PRIMION HUB ATIVADO"
+    title.TextColor3 = Color3.new(1,1,1)
+    title.BackgroundTransparency = 1
+    title.Parent = mainHub
 end
 
 -----------------------------------------------------------
--- TELA DE LOGIN (CORREÇÃO DE POSICIONAMENTO DOS NOMES)
+-- 2. TELA DE LOGIN (NOMES REPOSICIONADOS À DIREITA)
 -----------------------------------------------------------
 local loginFrame = Instance.new("Frame")
 loginFrame.Size = UDim2.new(0, 650, 0, 380)
@@ -52,20 +71,9 @@ loginFrame.BackgroundColor3 = COLORS.MainBG
 loginFrame.Parent = sg
 Instance.new("UICorner", loginFrame)
 
--- Títulos
-local t1 = Instance.new("TextLabel")
-t1.Size = UDim2.new(1, 0, 0, 40)
-t1.Position = UDim2.new(0, 0, 0, 15)
-t1.Text = "PRIMION EXECUTOR"
-t1.TextColor3 = COLORS.GoldNeon
-t1.Font = "GothamBold"
-t1.TextSize = 26
-t1.BackgroundTransparency = 1
-t1.Parent = loginFrame
-
--- PAINEL ESQUERDO
+-- Painel Lateral Esquerdo
 local lp = Instance.new("Frame")
-lp.Size = UDim2.new(0, 260, 0, 200)
+lp.Size = UDim2.new(0, 280, 0, 200)
 lp.Position = UDim2.new(0, 30, 0, 140)
 lp.BackgroundTransparency = 1
 lp.Parent = loginFrame
@@ -75,31 +83,30 @@ local function CreateLoginBtn(name, color, icon, pos)
     b.Size = UDim2.new(1, 0, 0, 55)
     b.Position = pos
     b.BackgroundColor3 = COLORS.Glass
-    b.Text = "" -- Deixa vazio para não bugar
+    b.Text = ""
     b.Parent = lp
-    Instance.new("UICorner", b).CornerRadius = UDim.new(0, 10)
+    Instance.new("UICorner", b)
     Instance.new("UIStroke", b).Color = color
 
-    -- QUADRADO DO ÍCONE
+    -- Ícone Lateral
     local il = Instance.new("TextLabel")
-    il.Size = UDim2.new(0, 38, 0, 38)
-    il.Position = UDim2.new(0, 10, 0.5, -19)
+    il.Size = UDim2.new(0, 40, 0, 40)
+    il.Position = UDim2.new(0, 10, 0.5, -20)
     il.BackgroundColor3 = color
     il.Text = icon
     il.TextColor3 = Color3.new(1,1,1)
-    il.TextSize = 20
     il.Parent = b
     Instance.new("UICorner", il)
 
-    -- NOME (MOVIDO MAIS PARA A DIREITA - CORREÇÃO AQUI)
+    -- NOME DO BOTÃO (MOVIMENTADO PARA A DIREITA)
     local tl = Instance.new("TextLabel")
-    tl.Size = UDim2.new(1, -70, 1, 0)
-    tl.Position = UDim2.new(0, 65, 0, 0) -- Movido 65 pixels para a direita
+    tl.Size = UDim2.new(1, -80, 1, 0)
+    tl.Position = UDim2.new(0, 75, 0, 0) -- Ajuste de 75px para não sobrepor o ícone
     tl.Text = name
     tl.TextColor3 = COLORS.Text
     tl.Font = "GothamBold"
-    tl.TextSize = 15
-    tl.TextXAlignment = Enum.TextXAlignment.Left -- Alinhado à esquerda após o ícone
+    tl.TextSize = 16
+    tl.TextXAlignment = "Left"
     tl.BackgroundTransparency = 1
     tl.Parent = b
 
@@ -110,30 +117,30 @@ local btnGet = CreateLoginBtn("GET KEY", COLORS.GreenNeon, "📥", UDim2.new(0,0
 local btnPremium = CreateLoginBtn("KEY PRIMION", COLORS.GoldNeon, "⭐", UDim2.new(0,0,0,65))
 local btnSupport = CreateLoginBtn("SUPPORT", COLORS.PurpleNeon, "💬", UDim2.new(0,0,0,130))
 
--- PAINEL DIREITO
+-- Painel Direito (Entrada de Chave)
 local rp = Instance.new("Frame")
-rp.Size = UDim2.new(0, 310, 0, 200)
-rp.Position = UDim2.new(0, 310, 0, 140)
+rp.Size = UDim2.new(0, 300, 0, 200)
+rp.Position = UDim2.new(0, 320, 0, 140)
 rp.BackgroundTransparency = 1
 rp.Parent = loginFrame
 
 local input = Instance.new("TextBox")
 input.Size = UDim2.new(1, 0, 0, 50)
 input.BackgroundColor3 = COLORS.Glass
-input.Text = LINK_GET_KEY -- Já vem com seu link
-input.TextColor3 = Color3.fromRGB(200, 200, 200)
-input.ClearTextOnFocus = false
+input.PlaceholderText = "Cole a sua chave aqui..." -- Removido o link da barra
+input.Text = ""
+input.TextColor3 = Color3.new(1,1,1)
 input.Parent = rp
 Instance.new("UICorner", input)
 
 local check = Instance.new("TextButton")
 check.Size = UDim2.new(1, 0, 0, 60)
 check.Position = UDim2.new(0, 0, 0, 75)
-check.BackgroundColor3 = Color3.fromRGB(15, 30, 20)
+check.BackgroundColor3 = Color3.fromRGB(20, 40, 30)
 check.Text = "CHECK KEY"
 check.TextColor3 = COLORS.GreenNeon
 check.Font = "GothamBold"
-check.TextSize = 22
+check.TextSize = 20
 check.Parent = rp
 Instance.new("UICorner", check)
 Instance.new("UIStroke", check).Color = COLORS.GreenNeon
@@ -142,24 +149,23 @@ local status = Instance.new("TextLabel")
 status.Size = UDim2.new(1, 0, 0, 30)
 status.Position = UDim2.new(0, 0, 0, 145)
 status.BackgroundTransparency = 1
-status.Text = "Aguardando chave..."
-status.TextColor3 = Color3.fromRGB(150, 150, 150)
+status.Text = "Aguardando..."
+status.TextColor3 = Color3.new(0.6, 0.6, 0.6)
 status.Parent = rp
 
--- LÓGICA
+-- Ações
 btnGet.MouseButton1Click:Connect(function()
     setclipboard(LINK_GET_KEY)
-    status.Text = "✅ Link de Key copiado!"
-    status.TextColor3 = COLORS.GreenNeon
+    status.Text = "✅ Link copiado!"
 end)
 
 check.MouseButton1Click:Connect(function()
-    if input.Text:gsub("%s+", "") == KEY_CORRETA then
-        status.Text = "✅ Autorizado!"
+    if input.Text == KEY_CORRETA then
+        status.Text = "✅ Acesso Liberado!"
+        task.wait(1)
         loginFrame:Destroy()
-        AbrirHubPrincipal()
+        AbrirHubPrincipal() -- Agora abre o GUI corretamente
     else
-        status.Text = "❌ Chave Errada!"
-        status.TextColor3 = Color3.new(1, 0, 0)
+        status.Text = "❌ Chave Inválida!"
     end
 end)
