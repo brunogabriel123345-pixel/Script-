@@ -29,7 +29,7 @@ sg.ResetOnSpawn = false
 sg.Parent = playerGui
 
 -----------------------------------------------------------
--- 1. PARTE: GUI UNIVERSAL (LAYOUT MANTIDO)
+-- 1. PARTE: GUI UNIVERSAL (FLY COMPATÍVEL COM CELULAR)
 -----------------------------------------------------------
 local function AbrirHubUniversal()
     local mainHub = Instance.new("Frame")
@@ -113,38 +113,47 @@ local function AbrirHubUniversal()
         end)
     end
 
-    -----------------------------------------------------------
-    -- FUNÇÕES ATUALIZADAS
-    -----------------------------------------------------------
-
-    -- FLY SYSTEM (MELHORADO)
+    -- LÓGICA DE VOO PARA CELULAR (FLY MOBILE)
     local flying = false
     local flySpeed = 50
-    AddToggle("Fly", COLORS.GoldNeon, function(on)
+    AddToggle("Fly (Mobile/PC)", COLORS.GoldNeon, function(on)
         flying = on
         local char = player.Character or player.CharacterAdded:Wait()
         local hrp = char:WaitForChild("HumanoidRootPart")
+        local hum = char:WaitForChild("Humanoid")
+        
         if flying then
-            local bv = Instance.new("BodyVelocity", hrp)
-            bv.Name = "FlyBV"
+            local bv = Instance.new("BodyVelocity")
+            bv.Name = "FlyVelocity"
+            bv.Parent = hrp
             bv.MaxForce = Vector3.new(math.huge, math.huge, math.huge)
+            bv.Velocity = Vector3.new(0,0,0)
+
+            local bg = Instance.new("BodyGyro")
+            bg.Name = "FlyGyro"
+            bg.Parent = hrp
+            bg.MaxTorque = Vector3.new(math.huge, math.huge, math.huge)
+            bg.P = 9e4
+
             task.spawn(function()
                 while flying do
-                    local cam = workspace.CurrentCamera.CFrame
-                    local moveDir = Vector3.new(0,0,0)
-                    if UserInputService:IsKeyDown(Enum.KeyCode.W) then moveDir = moveDir + cam.LookVector end
-                    if UserInputService:IsKeyDown(Enum.KeyCode.S) then moveDir = moveDir - cam.LookVector end
-                    if UserInputService:IsKeyDown(Enum.KeyCode.A) then moveDir = moveDir - cam.RightVector end
-                    if UserInputService:IsKeyDown(Enum.KeyCode.D) then moveDir = moveDir + cam.RightVector end
-                    bv.Velocity = moveDir * flySpeed
+                    bg.CFrame = workspace.CurrentCamera.CFrame
+                    -- Usa a direção do joystick/movimento do telemóvel
+                    bv.Velocity = hum.MoveDirection * flySpeed
+                    
+                    -- Mantém o personagem parado no ar se não estiver a mexer o joystick
+                    if hum.MoveDirection.Magnitude == 0 then
+                        bv.Velocity = Vector3.new(0, 0.1, 0) 
+                    end
                     RunService.RenderStepped:Wait()
                 end
                 bv:Destroy()
+                bg:Destroy()
             end)
         end
     end)
 
-    -- BOOST FPS (MAIS POTENTE)
+    -- BOOST FPS (MANTIDO)
     AddToggle("Boost FPS", COLORS.BlueNeon, function(on)
         if on then
             for _, v in pairs(game:GetDescendants()) do
