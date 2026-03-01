@@ -8,6 +8,7 @@ local UserInputService = game:GetService("UserInputService")
 local KEY_CORRETA = "key-htpjvg"
 local LINK_GET_KEY = "Https://link-hub.net/3920699/Bb9WkaqTBZsg"
 local LINK_GAMEPASS = "https://www.roblox.com/pt/game-pass/1731556830/Key-primion-scripy-killer"
+local LINK_DISCORD = "https://discord.gg/2rK2sRTf" -- Link do suporte
 
 -- PALETA DE CORES PREMIUM V2.0
 local COLORS = {
@@ -29,7 +30,7 @@ sg.ResetOnSpawn = false
 sg.Parent = playerGui
 
 -----------------------------------------------------------
--- TELA DE LOGIN (SEM TOGGLE / SEM HUB / BARRA LIMPA)
+-- TELA DE LOGIN (BARRA LIMPA / NOMES À DIREITA)
 -----------------------------------------------------------
 local loginFrame = Instance.new("Frame")
 loginFrame.Name = "LoginFrame"
@@ -63,7 +64,7 @@ t2.TextSize = 16
 t2.BackgroundTransparency = 1
 t2.Parent = loginFrame
 
--- Painel Lateral Esquerdo (Nomes Movidos para a Direita)
+-- Painel Lateral Esquerdo
 local lp = Instance.new("Frame")
 lp.Size = UDim2.new(0, 260, 0, 200)
 lp.Position = UDim2.new(0, 30, 0, 140)
@@ -80,7 +81,7 @@ local function CreateLoginBtn(name, color, icon, pos)
     Instance.new("UICorner", b).CornerRadius = UDim.new(0, 10)
     Instance.new("UIStroke", b).Color = color
 
-    -- Ícone (Quadrado Colorido)
+    -- Ícone
     local il = Instance.new("TextLabel")
     il.Size = UDim2.new(0, 38, 0, 38)
     il.Position = UDim2.new(0, 10, 0.5, -19)
@@ -92,10 +93,10 @@ local function CreateLoginBtn(name, color, icon, pos)
     il.Parent = b
     Instance.new("UICorner", il)
 
-    -- Nome (Posicionado com folga à direita do ícone)
+    -- Nome (Posicionado à direita do ícone)
     local tl = Instance.new("TextLabel")
     tl.Size = UDim2.new(1, -80, 1, 0)
-    tl.Position = UDim2.new(0, 75, 0, 0) -- Ajuste para 75px de distância
+    tl.Position = UDim2.new(0, 75, 0, 0) 
     tl.Text = name
     tl.TextColor3 = COLORS.Text
     tl.Font = Enum.Font.GothamBold
@@ -111,7 +112,7 @@ local btnGet = CreateLoginBtn("GET KEY", COLORS.GreenNeon, "📥", UDim2.new(0,0
 local btnPremium = CreateLoginBtn("KEY PRIMION", COLORS.GoldNeon, "⭐", UDim2.new(0,0,0,65))
 local btnSupport = CreateLoginBtn("SUPPORT", COLORS.PurpleNeon, "💬", UDim2.new(0,0,0,130))
 
--- Painel Direito (Barra de Digitação Original e Botão Check)
+-- Painel Direito
 local rp = Instance.new("Frame")
 rp.Size = UDim2.new(0, 310, 0, 200)
 rp.Position = UDim2.new(0, 310, 0, 140)
@@ -119,17 +120,15 @@ rp.BackgroundTransparency = 1
 rp.Parent = loginFrame
 
 local input = Instance.new("TextBox")
-input.Name = "KeyInput"
 input.Size = UDim2.new(1, 0, 0, 50)
 input.BackgroundColor3 = COLORS.Glass
 input.PlaceholderText = "Cole a sua chave aqui..."
-input.Text = "" -- TOTALMENTE VAZIA ORIGINAL
+input.Text = "" -- Original sem nada
 input.TextColor3 = COLORS.Text
 input.Font = Enum.Font.Gotham
 input.TextSize = 15
 input.Parent = rp
-Instance.new("UICorner", input).CornerRadius = UDim.new(0, 10)
-Instance.new("UIStroke", input).Color = COLORS.Border
+Instance.new("UICorner", input)
 
 local check = Instance.new("TextButton")
 check.Size = UDim2.new(1, 0, 0, 60)
@@ -140,7 +139,7 @@ check.TextColor3 = COLORS.GreenNeon
 check.Font = Enum.Font.GothamBold
 check.TextSize = 22
 check.Parent = rp
-Instance.new("UICorner", check).CornerRadius = UDim.new(0, 12)
+Instance.new("UICorner", check)
 Instance.new("UIStroke", check).Color = COLORS.GreenNeon
 
 local status = Instance.new("TextLabel")
@@ -149,33 +148,31 @@ status.Position = UDim2.new(0, 0, 0, 145)
 status.BackgroundTransparency = 1
 status.Text = "Aguardando chave..."
 status.TextColor3 = Color3.fromRGB(150, 150, 150)
-status.Font = Enum.Font.GothamMedium
-status.TextSize = 14
 status.Parent = rp
 
 -- LÓGICA DOS BOTÕES
 btnGet.MouseButton1Click:Connect(function()
     setclipboard(LINK_GET_KEY)
     status.Text = "✅ Link de Key copiado!"
-    status.TextColor3 = COLORS.GreenNeon
 end)
 
 btnPremium.MouseButton1Click:Connect(function()
     setclipboard(LINK_GAMEPASS)
     status.Text = "⭐ Link Premium copiado!"
-    status.TextColor3 = COLORS.GoldNeon
+end)
+
+btnSupport.MouseButton1Click:Connect(function()
+    setclipboard(LINK_DISCORD)
+    status.Text = "💬 Link do Discord copiado!"
 end)
 
 check.MouseButton1Click:Connect(function()
     if input.Text:gsub("%s+", "") == KEY_CORRETA then
         status.Text = "✅ Autorizado!"
-        status.TextColor3 = COLORS.GreenNeon
         task.wait(1)
         loginFrame:Destroy()
-        -- Não há Hub ou Toggle para abrir aqui, conforme solicitado.
     else
         status.Text = "❌ Chave Errada!"
-        status.TextColor3 = Color3.new(1, 0, 0)
         input.Text = ""
     end
 end)
