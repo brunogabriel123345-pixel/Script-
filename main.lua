@@ -29,7 +29,7 @@ sg.ResetOnSpawn = false
 sg.Parent = playerGui
 
 -----------------------------------------------------------
--- 1. PARTE: GUI UNIVERSAL (FLY COMPATÍVEL COM CELULAR)
+-- 1. PARTE: GUI UNIVERSAL (FLY 3D COMPATÍVEL)
 -----------------------------------------------------------
 local function AbrirHubUniversal()
     local mainHub = Instance.new("Frame")
@@ -113,14 +113,15 @@ local function AbrirHubUniversal()
         end)
     end
 
-    -- LÓGICA DE VOO PARA CELULAR (FLY MOBILE)
+    -- NOVO SISTEMA DE VOO 3D (SEGUE A CÂMERA NO CELULAR)
     local flying = false
-    local flySpeed = 50
-    AddToggle("Fly (Mobile/PC)", COLORS.GoldNeon, function(on)
+    local flySpeed = 60
+    AddToggle("Fly (Câmera)", COLORS.GoldNeon, function(on)
         flying = on
         local char = player.Character or player.CharacterAdded:Wait()
         local hrp = char:WaitForChild("HumanoidRootPart")
         local hum = char:WaitForChild("Humanoid")
+        local camera = workspace.CurrentCamera
         
         if flying then
             local bv = Instance.new("BodyVelocity")
@@ -137,13 +138,17 @@ local function AbrirHubUniversal()
 
             task.spawn(function()
                 while flying do
-                    bg.CFrame = workspace.CurrentCamera.CFrame
-                    -- Usa a direção do joystick/movimento do telemóvel
-                    bv.Velocity = hum.MoveDirection * flySpeed
+                    bg.CFrame = camera.CFrame
                     
-                    -- Mantém o personagem parado no ar se não estiver a mexer o joystick
-                    if hum.MoveDirection.Magnitude == 0 then
-                        bv.Velocity = Vector3.new(0, 0.1, 0) 
+                    -- No celular, MoveDirection.Z negativo é "frente" e positivo é "trás"
+                    -- Multiplicamos pela CFrame da Câmera para voar para onde você olha
+                    local moveDir = hum.MoveDirection
+                    
+                    if moveDir.Magnitude > 0 then
+                        -- Aqui está o segredo: ele usa a direção do joystick baseada na rotação da câmera
+                        bv.Velocity = camera.CFrame:VectorToWorldSpace(Vector3.new(moveDir.X, 0, moveDir.Z).Unit * 5) * (flySpeed/5)
+                    else
+                        bv.Velocity = Vector3.new(0, 0.1, 0)
                     end
                     RunService.RenderStepped:Wait()
                 end
