@@ -29,7 +29,7 @@ sg.ResetOnSpawn = false
 sg.Parent = playerGui
 
 -----------------------------------------------------------
--- 1. PARTE: GUI UNIVERSAL (LAYOUT MANTIDO + NOVAS FUNÇÕES)
+-- 1. PARTE: GUI UNIVERSAL (LAYOUT MANTIDO)
 -----------------------------------------------------------
 local function AbrirHubUniversal()
     local mainHub = Instance.new("Frame")
@@ -114,23 +114,20 @@ local function AbrirHubUniversal()
     end
 
     -----------------------------------------------------------
-    -- FUNÇÕES ADICIONADAS/ATUALIZADAS
+    -- FUNÇÕES ATUALIZADAS
     -----------------------------------------------------------
 
-    -- FLY SYSTEM
+    -- FLY SYSTEM (MELHORADO)
     local flying = false
     local flySpeed = 50
     AddToggle("Fly", COLORS.GoldNeon, function(on)
         flying = on
         local char = player.Character or player.CharacterAdded:Wait()
         local hrp = char:WaitForChild("HumanoidRootPart")
-        
         if flying then
             local bv = Instance.new("BodyVelocity", hrp)
             bv.Name = "FlyBV"
             bv.MaxForce = Vector3.new(math.huge, math.huge, math.huge)
-            bv.Velocity = Vector3.new(0,0,0)
-            
             task.spawn(function()
                 while flying do
                     local cam = workspace.CurrentCamera.CFrame
@@ -147,18 +144,20 @@ local function AbrirHubUniversal()
         end
     end)
 
-    -- BOOST FPS (REMOVE TEXTURAS)
+    -- BOOST FPS (MAIS POTENTE)
     AddToggle("Boost FPS", COLORS.BlueNeon, function(on)
         if on then
             for _, v in pairs(game:GetDescendants()) do
                 if v:IsA("BasePart") then
                     v.Material = Enum.Material.SmoothPlastic
+                    v.Reflectance = 0
                 elseif v:IsA("Decal") or v:IsA("Texture") then
-                    v:Destroy()
-                elseif v:IsA("SpecialMesh") then
-                    v.TextureId = ""
+                    v.Transparency = 1
+                elseif v:IsA("ParticleEmitter") or v:IsA("Trail") then
+                    v.Enabled = false
                 end
             end
+            game:GetService("Lighting").GlobalShadows = false
             settings().Rendering.QualityLevel = 1
         end
     end)
