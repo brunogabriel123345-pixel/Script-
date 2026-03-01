@@ -28,7 +28,7 @@ sg.ResetOnSpawn = false
 sg.Parent = playerGui
 
 -----------------------------------------------------------
--- 1. PARTE: GUI UNIVERSAL PROFISSIONAL (CORRIGIDA)
+-- 1. PARTE: GUI UNIVERSAL PROFISSIONAL (COM ON/OFF E BOOST FPS)
 -----------------------------------------------------------
 local function AbrirHubUniversal()
     local mainHub = Instance.new("Frame")
@@ -44,7 +44,6 @@ local function AbrirHubUniversal()
     stroke.Color = COLORS.BlueNeon
     stroke.Thickness = 2
 
-    -- Barra de Título do Hub
     local topBar = Instance.new("Frame")
     topBar.Size = UDim2.new(1, 0, 0, 40)
     topBar.BackgroundColor3 = COLORS.Glass
@@ -60,12 +59,11 @@ local function AbrirHubUniversal()
     hTitle.TextSize = 16
     hTitle.Parent = topBar
 
-    -- Área de Funções com Scroll (Para garantir que apareçam)
     local scroll = Instance.new("ScrollingFrame")
     scroll.Size = UDim2.new(1, -20, 1, -60)
     scroll.Position = UDim2.new(0, 10, 0, 50)
     scroll.BackgroundTransparency = 1
-    scroll.CanvasSize = UDim2.new(0, 0, 2, 0) -- Espaço para muitos botões
+    scroll.CanvasSize = UDim2.new(0, 0, 2, 0)
     scroll.ScrollBarThickness = 4
     scroll.Parent = mainHub
 
@@ -73,7 +71,7 @@ local function AbrirHubUniversal()
     layout.CellSize = UDim2.new(0, 150, 0, 40)
     layout.CellPadding = UDim2.new(0, 10, 0, 10)
 
-    -- Botão Toogle (Abrir/Fechar)
+    -- Toggle Button (P)
     local toggleBtn = Instance.new("TextButton")
     toggleBtn.Size = UDim2.new(0, 45, 0, 45)
     toggleBtn.Position = UDim2.new(0, 10, 0, 10)
@@ -90,46 +88,87 @@ local function AbrirHubUniversal()
         mainHub.Visible = not mainHub.Visible
     end)
 
-    -- Função Auxiliar para adicionar botões
-    local function AddFunc(name, color, callback)
+    -- FUNÇÃO PARA CRIAR BOTÕES COM ESTADO ON/OFF
+    local function AddToggle(name, defaultColor, callback)
         local btn = Instance.new("TextButton")
         btn.BackgroundColor3 = COLORS.Glass
-        btn.Text = name
-        btn.TextColor3 = color
+        btn.Text = name .. ": OFF"
+        btn.TextColor3 = defaultColor
         btn.Font = Enum.Font.GothamMedium
-        btn.TextSize = 14
+        btn.TextSize = 13
         btn.Parent = scroll
         Instance.new("UICorner", btn)
         local s = Instance.new("UIStroke", btn)
         s.Color = COLORS.Border
-        btn.MouseButton1Click:Connect(callback)
+        
+        local state = false
+        btn.MouseButton1Click:Connect(function()
+            state = not state
+            btn.Text = name .. (state and ": ON" or ": OFF")
+            btn.TextColor3 = state and COLORS.GreenNeon or defaultColor
+            callback(state)
+        end)
     end
 
-    -- LISTA DE FUNÇÕES (Agora visíveis no Grid)
-    AddFunc("Speed x100", COLORS.BlueNeon, function() player.Character.Humanoid.WalkSpeed = 100 end)
-    AddFunc("Jump x150", COLORS.GreenNeon, function() player.Character.Humanoid.JumpPower = 150 end)
-    AddFunc("ESP Players", COLORS.PurpleNeon, function() 
-        for _, p in pairs(Players:GetPlayers()) do
-            if p ~= player and p.Character then
-                local h = Instance.new("Highlight", p.Character)
-                h.FillColor = COLORS.PurpleNeon
+    -- LISTA DE FUNÇÕES ATUALIZADA
+    
+    AddToggle("Speed Hack", COLORS.BlueNeon, function(on)
+        player.Character.Humanoid.WalkSpeed = on and 100 or 16
+    end)
+
+    AddToggle("Super Jump", COLORS.GreenNeon, function(on)
+        player.Character.Humanoid.JumpPower = on and 150 or 50
+    end)
+
+    AddToggle("ESP Players", COLORS.PurpleNeon, function(on)
+        if on then
+            for _, p in pairs(Players:GetPlayers()) do
+                if p ~= player and p.Character then
+                    local h = Instance.new("Highlight", p.Character)
+                    h.Name = "PrimionESP"
+                    h.FillColor = COLORS.PurpleNeon
+                end
+            end
+        else
+            for _, p in pairs(Players:GetPlayers()) do
+                if p.Character and p.Character:FindFirstChild("PrimionESP") then
+                    p.Character.PrimionESP:Destroy()
+                end
             end
         end
     end)
-    AddFunc("Full Bright", COLORS.GoldNeon, function() 
-        game:GetService("Lighting").Brightness = 2
-        game:GetService("Lighting").ClockTime = 14
+
+    AddToggle("Boost FPS", COLORS.BlueNeon, function(on)
+        if on then
+            for _, v in pairs(game:GetDescendants()) do
+                if v:IsA("BasePart") or v:IsA("Decal") then
+                    v.Material = Enum.Material.SmoothPlastic
+                    if v:IsA("Decal") then v.Transparency = 1 end
+                end
+            end
+            settings().Rendering.QualityLevel = 1
+        else
+            print("Desligue o script e entre em um novo servidor para resetar texturas.")
+        end
     end)
-    AddFunc("Anti-AFK", COLORS.GreenNeon, function() 
-        player.Idled:Connect(function() 
+
+    AddToggle("Full Bright", COLORS.GoldNeon, function(on)
+        game:GetService("Lighting").Brightness = on and 2 or 1
+        game:GetService("Lighting").ClockTime = on and 14 or 12
+        game:GetService("Lighting").GlobalShadows = not on
+    end)
+
+    AddToggle("Anti-AFK", COLORS.GreenNeon, function(on)
+        _G.AntiAFK = on
+        while _G.AntiAFK do
             game:GetService("VirtualUser"):Button2Down(Vector2.new(0,0), workspace.CurrentCamera.CFrame)
-        end)
+            task.wait(30)
+        end
     end)
-    AddFunc("Fly (Em breve)", COLORS.GoldNeon, function() print("Fly em desenvolvimento") end)
 end
 
 -----------------------------------------------------------
--- 2. PARTE: TELA DE LOGIN (INTOCADA - IGUAL À SUA)
+-- 2. PARTE: TELA DE LOGIN (SEM ALTERAÇÕES)
 -----------------------------------------------------------
 local loginFrame = Instance.new("Frame")
 loginFrame.Size = UDim2.new(0, 650, 0, 380)
@@ -210,7 +249,7 @@ check.MouseButton1Click:Connect(function()
         status.Text = "✅ Autorizado!"
         task.wait(0.5)
         loginFrame:Destroy()
-        AbrirHubUniversal() -- Isso cria a nova interface profissional
+        AbrirHubUniversal()
     else
         status.Text = "❌ Chave Errada!"
         input.Text = ""
