@@ -1,26 +1,23 @@
 local Players = game:GetService("Players")
 local player = Players.LocalPlayer
 local playerGui = player:WaitForChild("PlayerGui")
-local UserInputService = game:GetService("UserInputService")
 
 -- CONFIGURAÇÕES
 local KEY_CORRETA = "key-htpjvg"
 local LINK_GAMEPASS = "https://www.roblox.com/pt/game-pass/1731556830/Key-primion-scripy-killer"
 
--- CORES
+-- CORES ESTILO FOTO 1
 local COLORS = {
     BG = Color3.fromRGB(15, 17, 22),
     Sidebar = Color3.fromRGB(20, 22, 28),
-    Accent = Color3.fromRGB(0, 255, 127),
+    Green = Color3.fromRGB(0, 255, 127),
     Gold = Color3.fromRGB(255, 200, 50),
-    Black = Color3.fromRGB(0, 0, 0)
+    Purple = Color3.fromRGB(130, 100, 255),
+    White = Color3.new(1, 1, 1)
 }
 
--- LIMPEZA (CORRIGIDO: Agora apaga o nome certo da ScreenGui)
-if playerGui:FindFirstChild("PrimionV4_Final") then 
-    playerGui["PrimionV4_Final"]:Destroy() 
-end
-
+-- LIMPEZA
+if playerGui:FindFirstChild("PrimionV4_Final") then playerGui.PrimionV4_Final:Destroy() end
 local sg = Instance.new("ScreenGui")
 sg.Name = "PrimionV4_Final"
 sg.IgnoreGuiInset = true
@@ -28,161 +25,119 @@ sg.ResetOnSpawn = false
 sg.Parent = playerGui
 
 -----------------------------------------------------------
--- 🌌 BOTÃO TOGGLE (QUADRADINHO PRETO COM ESTRELINHAS)
------------------------------------------------------------
-local toggleBtn = Instance.new("TextButton")
-toggleBtn.Size = UDim2.new(0, 45, 0, 45)
-toggleBtn.Position = UDim2.new(0, 10, 0.5, -22)
-toggleBtn.BackgroundColor3 = COLORS.Black
-toggleBtn.Text = "✨\n. * . " 
-toggleBtn.TextColor3 = Color3.new(1, 1, 1)
-toggleBtn.Font = Enum.Font.GothamBold
-toggleBtn.TextSize = 10
-toggleBtn.Visible = false -- Só aparece após a Key
-toggleBtn.Parent = sg
-
-Instance.new("UICorner", toggleBtn).CornerRadius = UDim.new(0, 8)
-local tStroke = Instance.new("UIStroke", toggleBtn)
-tStroke.Color = Color3.fromRGB(60, 60, 60)
-tStroke.Thickness = 2
-
------------------------------------------------------------
--- 🎮 PAINEL PRINCIPAL (ABAS LATERAIS)
------------------------------------------------------------
-local mainHub = Instance.new("Frame")
-mainHub.Size = UDim2.new(0, 650, 0, 400)
-mainHub.Position = UDim2.new(0.5, -325, 0.5, -200)
-mainHub.BackgroundColor3 = COLORS.BG
-mainHub.Visible = false
-mainHub.Parent = sg
-Instance.new("UICorner", mainHub).CornerRadius = UDim.new(0, 12)
-Instance.new("UIStroke", mainHub).Color = COLORS.Accent
-
--- Sidebar
-local sidebar = Instance.new("Frame")
-sidebar.Size = UDim2.new(0, 150, 1, 0)
-sidebar.BackgroundColor3 = COLORS.Sidebar
-sidebar.Parent = mainHub
-Instance.new("UICorner", sidebar)
-
-local sideLayout = Instance.new("UIListLayout", sidebar)
-sideLayout.Padding = UDim.new(0, 5)
-sideLayout.HorizontalAlignment = Enum.HorizontalAlignment.Center
-
-local sideTitle = Instance.new("TextLabel")
-sideTitle.Size = UDim2.new(1, 0, 0, 50)
-sideTitle.Text = "PRIMION V4"
-sideTitle.TextColor3 = COLORS.Gold
-sideTitle.Font = Enum.Font.GothamBold
-sideTitle.TextSize = 18
-sideTitle.BackgroundTransparency = 1
-sideTitle.Parent = sidebar
-
--- Área de Conteúdo
-local contentArea = Instance.new("Frame")
-contentArea.Size = UDim2.new(1, -165, 1, -20)
-contentArea.Position = UDim2.new(0, 155, 0, 10)
-contentArea.BackgroundTransparency = 1
-contentArea.Parent = mainHub
-
-local pages = {}
-local function CreatePage(name)
-    local p = Instance.new("ScrollingFrame")
-    p.Size = UDim2.new(1, 0, 1, 0)
-    p.Visible = false
-    p.BackgroundTransparency = 1
-    p.ScrollBarThickness = 2
-    p.Parent = contentArea
-    pages[name] = p
-    return p
-end
-
--- Criar as 5 Abas
-local tabs = {"Menu", "ESP", "FPS Killer", "Player", "Configuração"}
-for _, name in pairs(tabs) do
-    local p = CreatePage(name)
-    local b = Instance.new("TextButton")
-    b.Size = UDim2.new(0.9, 0, 0, 35)
-    b.BackgroundColor3 = Color3.fromRGB(35, 37, 45)
-    b.Text = name
-    b.TextColor3 = Color3.new(1,1,1)
-    b.Font = Enum.Font.GothamMedium
-    b.Parent = sidebar
-    Instance.new("UICorner", b)
-    
-    b.MouseButton1Click:Connect(function()
-        for _, pg in pairs(pages) do pg.Visible = false end
-        p.Visible = true
-    end)
-end
-pages["Menu"].Visible = true
-
--- Lógica do Toggle
-toggleBtn.MouseButton1Click:Connect(function()
-    mainHub.Visible = not mainHub.Visible
-end)
-
------------------------------------------------------------
--- 🔑 TELA DE LOGIN (ESTILO FOTO)
+-- 🔑 TELA DE LOGIN (BASEADO NA FOTO 1)
 -----------------------------------------------------------
 local loginFrame = Instance.new("Frame")
-loginFrame.Size = UDim2.new(0, 550, 0, 350)
-loginFrame.Position = UDim2.new(0.5, -275, 0.5, -175)
+loginFrame.Size = UDim2.new(0, 500, 0, 280) -- Mais compacto
+loginFrame.Position = UDim2.new(0.5, -250, 0.5, -140)
 loginFrame.BackgroundColor3 = COLORS.BG
 loginFrame.Parent = sg
-Instance.new("UICorner", loginFrame)
+Instance.new("UICorner", loginFrame).CornerRadius = UDim.new(0, 15)
 
-local loginTitle = Instance.new("TextLabel")
-loginTitle.Size = UDim2.new(1,0,0,50)
-loginTitle.Text = "PRIMION KEY SYSTEM\n100 Robux - Lifetime Infinito"
-loginTitle.TextColor3 = COLORS.Gold
-loginTitle.Font = Enum.Font.GothamBold
-loginTitle.TextSize = 14
-loginTitle.Parent = loginFrame
-loginTitle.BackgroundTransparency = 1
+-- Borda brilhante suave
+local stroke = Instance.new("UIStroke", loginFrame)
+stroke.Thickness = 2
+stroke.Color = Color3.fromRGB(40, 45, 55)
 
-local input = Instance.new("TextBox")
-input.Size = UDim2.new(0.8, 0, 0, 45)
-input.Position = UDim2.new(0.1, 0, 0, 100)
-input.BackgroundColor3 = COLORS.Sidebar
-input.PlaceholderText = "Cole sua key aqui..."
-input.Text = ""
-input.TextColor3 = Color3.new(1,1,1)
-input.Parent = loginFrame
-Instance.new("UICorner", input)
+-- TÍTULO COMPACTO
+local title = Instance.new("TextLabel")
+title.Size = UDim2.new(1, 0, 0, 40)
+title.Position = UDim2.new(0, 0, 0, 10)
+title.Text = "PRIMION KEY SYSTEM V2.0"
+title.TextColor3 = COLORS.Gold
+title.Font = Enum.Font.GothamBold
+title.TextSize = 16
+title.BackgroundTransparency = 1
+title.Parent = loginFrame
 
-local btnGrid = Instance.new("Frame")
-btnGrid.Size = UDim2.new(0.8, 0, 0, 50)
-btnGrid.Position = UDim2.new(0.1, 0, 0, 160)
-btnGrid.BackgroundTransparency = 1
-btnGrid.Parent = loginFrame
-local layout = Instance.new("UIListLayout", btnGrid)
-layout.FillDirection = Enum.FillDirection.Horizontal
-layout.Padding = UDim.new(0, 10)
+-- BARRA LATERAL DE BOTÕES (ESQUERDA)
+local sideButtons = Instance.new("Frame")
+sideButtons.Size = UDim2.new(0, 180, 0, 180)
+sideButtons.Position = UDim2.new(0, 20, 0, 60)
+sideButtons.BackgroundTransparency = 1
+sideButtons.Parent = loginFrame
 
-local function QuickBtn(name, color, callback)
-    local b = Instance.new("TextButton")
-    b.Size = UDim2.new(0.32, 0, 1, 0)
-    b.BackgroundColor3 = color
-    b.Text = name
-    b.TextColor3 = Color3.new(1,1,1)
-    b.Font = Enum.Font.GothamBold
-    b.Parent = btnGrid
-    Instance.new("UICorner", b)
-    b.MouseButton1Click:Connect(callback)
+local layout = Instance.new("UIListLayout", sideButtons)
+layout.Padding = UDim.new(0, 8)
+
+local function CreateLoginBtn(name, color, icon, callback)
+    local btn = Instance.new("TextButton")
+    btn.Size = UDim2.new(1, 0, 0, 45)
+    btn.BackgroundColor3 = Color3.fromRGB(25, 28, 35)
+    btn.Text = icon .. "  " .. name
+    btn.TextColor3 = color
+    btn.Font = Enum.Font.GothamBold
+    btn.TextSize = 14
+    btn.Parent = sideButtons
+    
+    local bCorner = Instance.new("UICorner", btn)
+    local bStroke = Instance.new("UIStroke", btn)
+    bStroke.Color = color
+    bStroke.Transparency = 0.6
+    
+    btn.MouseButton1Click:Connect(callback)
 end
 
-QuickBtn("GET KEY", Color3.fromRGB(255, 100, 0), function() setclipboard("LINK_AQUI") end)
-QuickBtn("CHECK KEY", COLORS.Accent, function()
+CreateLoginBtn("GET KEY", COLORS.Green, "📥", function() setclipboard("LINK_DA_KEY") end)
+CreateLoginBtn("KEY PRIMION", COLORS.Gold, "🔑", function() setclipboard(LINK_GAMEPASS) end)
+CreateLoginBtn("SUPPORTe", COLORS.Purple, "💬", function() setclipboard("LINK_DISCORD") end)
+
+-- ÁREA DE INPUT (DIREITA)
+local inputArea = Instance.new("Frame")
+inputArea.Size = UDim2.new(0, 260, 0, 180)
+inputArea.Position = UDim2.new(0, 215, 0, 60)
+inputArea.BackgroundTransparency = 1
+inputArea.Parent = loginFrame
+
+local input = Instance.new("TextBox")
+input.Size = UDim2.new(1, 0, 0, 45)
+input.Position = UDim2.new(0, 0, 0, 0)
+input.BackgroundColor3 = Color3.fromRGB(25, 28, 35)
+input.PlaceholderText = "Cole sua chave aqui..."
+input.Text = ""
+input.TextColor3 = COLORS.White
+input.Font = Enum.Font.GothamMedium
+input.Parent = inputArea
+Instance.new("UICorner", input)
+Instance.new("UIStroke", input).Color = Color3.fromRGB(60, 60, 60)
+
+local checkBtn = Instance.new("TextButton")
+checkBtn.Size = UDim2.new(1, 0, 0, 50)
+checkBtn.Position = UDim2.new(0, 0, 0, 60)
+checkBtn.BackgroundColor3 = Color3.fromRGB(30, 50, 40)
+checkBtn.Text = "CHECK KEY"
+checkBtn.TextColor3 = COLORS.Green
+checkBtn.Font = Enum.Font.GothamBold
+checkBtn.TextSize = 16
+checkBtn.Parent = inputArea
+Instance.new("UICorner", checkBtn)
+Instance.new("UIStroke", checkBtn).Color = COLORS.Green
+
+-- Status
+local status = Instance.new("TextLabel")
+status.Size = UDim2.new(1, 0, 0, 30)
+status.Position = UDim2.new(0, 0, 0, 120)
+status.BackgroundTransparency = 1
+status.Text = ""
+status.Font = Enum.Font.GothamMedium
+status.TextSize = 12
+status.Parent = inputArea
+
+-----------------------------------------------------------
+-- LÓGICA DE VERIFICAÇÃO
+-----------------------------------------------------------
+checkBtn.MouseButton1Click:Connect(function()
     if input.Text == KEY_CORRETA then
-        loginFrame:Destroy() -- Apaga a tela de login
-        mainHub.Visible = true -- Mostra o menu
-        toggleBtn.Visible = true -- Libera o botão das estrelinhas
+        status.TextColor3 = COLORS.Green
+        status.Text = "✅ Key Válida! Autorizando..."
+        task.wait(1)
+        loginFrame:Destroy()
+        -- Aqui você chamaria a função para abrir o seu MainHub
+        print("Acesso Liberado")
     else
-        input.Text = ""
-        input.PlaceholderText = "KEY INCORRETA!"
-        task.wait(1.5)
-        input.PlaceholderText = "Cole sua key aqui..."
+        status.TextColor3 = Color3.fromRGB(255, 80, 80)
+        status.Text = "❌ Key Incorreta!"
+        task.wait(2)
+        status.Text = ""
     end
 end)
-QuickBtn("PREMIUM", COLORS.Gold, function() setclipboard(LINK_GAMEPASS) end)
